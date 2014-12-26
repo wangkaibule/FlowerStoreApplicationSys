@@ -1,0 +1,6 @@
+attributes
+	session : UserInfomation(CurrentUserInfomation)
+		  ProjectItems(Iterator)
+
+parameters :
+	request : method(int)

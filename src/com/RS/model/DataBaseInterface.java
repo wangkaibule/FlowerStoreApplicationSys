@@ -1,11 +1,11 @@
 package com.RS.model;
 
 public class DataBaseInterface {
-	public UserInformation DBgetUserInfomation(String UserName) {
-		return new UserInformation();
+	public CurrentUserInformation DBgetUserInfomation(String UserName) {
+		return new CurrentUserInformation();
 	}
 
-	public boolean DBisValidUser(String UserName, String password,UserInformation info) {
+	public boolean DBisValidUser(String UserName, String password) {
 		
 		return true;
 	}

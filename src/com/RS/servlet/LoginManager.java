@@ -49,28 +49,30 @@ public class LoginManager extends HttpServlet {
 		String formUserName = (String)request.getParameter(formUserNameId);
 		String formPassword = (String)request.getParameter(formPasswordId);
 		
-		UserInformation UsrInfo=null;
+		CurrentUserInformation UsrInfo=null;
 		DataBaseInterface DB = new DataBaseInterface();
 		
 		
 		if(formPassword == null || formPassword.length()==0){
-			if(formUserNameId == null || formUserNameId.length() == 0){
+			if(formUserName == null || formUserName.length() == 0){
 				response.sendRedirect("LoginPage?status=emptyUsrN");
 			}else{
-				UsrInfo = DB.DBgetUserInfomation(formUserName);
+				UsrInfo = new CurrentUserInformation(formUserName);
 				
 			}
 		}else{
 
-			UsrInfo = new UserInformation();
-			if(!DB.DBisValidUser(formUserName,formPassword,UsrInfo)){
+			UsrInfo = new CurrentUserInformation();
+			if(!DB.DBisValidUser(formUserName,formPassword)){
 				response.sendRedirect("LoginPage?status=LoginErr");
+			}else{
+				UsrInfo = new CurrentUserInformation(formUserName, formPassword);
 			}
 		}
 		
 		HttpSession session = request.getSession();
-		session.setAttribute("UserInformatioin", UsrInfo);
-		request.getRequestDispatcher("DashBoard").forward(request,response);
+		session.setAttribute("UserInformation", UsrInfo);
+		response.sendRedirect(response.encodeRedirectURL("/DashBoard"));
 	}
 
 }
