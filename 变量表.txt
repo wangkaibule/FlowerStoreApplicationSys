@@ -3,4 +3,4 @@ attributes
 		  ProjectItems(Iterator)
 
 parameters :
-	request : method(int)
+	request : method(int) controller specific request parameter,used to differ the different requests for the same servlet.
