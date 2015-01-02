@@ -5,85 +5,86 @@ import java.sql.SQLException;
 
 import sun.security.pkcs11.Secmod.DbMode;
 
-import com.RS.model.MPC;
 import com.sun.org.apache.regexp.internal.recompile;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import javafx.beans.property.adapter.JavaBeanProperty;
 import javafx.scene.chart.PieChart.Data;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Iterator;
 
 public class CurrentUserInformation implements java.io.Serializable {
 
-	private String UserName;
-	private String UserId;
-	private boolean isAurthorized;
-	private boolean isLogged;
+	private String userId;
+	private String userName;
+	private ArrayList<ProjectItem> projects;
 
-	public void setUserInformation(ResultSet DataBaseResultSet)
-			throws SQLException {
-		final int writable = MPC.UserAurthorization_Writable;
-		final int readonly = MPC.UserAurthorization_ReadOnly;
+	public CurrentUserInformation(String userId, String password) {
+		projects = new ArrayList<ProjectItem>();
+		DataBaseInterface db = new DataBaseInterface();
 
-		if (!DataBaseResultSet.first()) {
-			throw new SQLException();
-		} else {
-			UserName = DataBaseResultSet
-					.getString(MPC.DBTableColumnLable_UserName);
-			UserId = DataBaseResultSet.getString(MPC.DBTableColumnLable_UserId);
-
-			switch (DataBaseResultSet
-					.getInt(MPC.DBTableColumnLable_UserAurthorization)) {
-			case writable:
-				isAurthorized = true;
-				break;
-			case readonly:
-				isAurthorized = false;
-				break;
-			default:
-				isAurthorized = false;
-			}
-
-			isLogged = false;
-
-		}
-	}
-
-	public CurrentUserInformation(String usrName, String password) {
-
+		this.userId = userId;
+		this.userName = db.getUserName(userId);
+		db.getCurrentUserProjectItems(userId, password, projects);
 	}
 
 	public CurrentUserInformation(String usrName) {
 
+		projects = new ArrayList<ProjectItem>();
+		DataBaseInterface db = new DataBaseInterface();
+
+		this.userId = userId;
+		this.userName = db.getUserName(userId);
+		db.getCurrentUserProjectItems(userId, projects);
+
+	}
+
+	public boolean deleteProjectItem(long projectUID) {
+		ProjectItem[] projectArray = (ProjectItem[]) projects.toArray();
+		boolean isSuccess = false;
+		DataBaseInterface db = new DataBaseInterface();
+
+		for (int i = 0; i < projectArray.length; i++) {
+			if (projectArray[i].getProjectUID() == projectUID) {
+				if (((AccessLeveled) projectArray[i]).getLevel().isRemovable()) {
+					isSuccess = db.deleteProjectItem(projectUID);
+					break;
+				}
+			}
+		}
+
+		return isSuccess;
+	}
+
+	public ProjectItem addProjectItem() {
+		return new ProjectItem();
+		// TODO:also add this project object to the info projects arraylists.
 	}
 
 	// make this class to be able to become a JavaBean
-	public CurrentUserInformation() {
-		this.UserId = "";
-		this.UserName = "";
-		this.isAurthorized = false;
-	}
 
 	// getters
 	public String getUserName() {
 
-		return UserName;
+		return userName;
 	}
 
 	public String getUserId() {
 
-		return UserId;
+		return userId;
 	}
 
-	public boolean isWritable() {
-
-		return isAurthorized;
+	public ArrayList<ProjectItem> getProjects() {
+		return projects;
 	}
 
-	public boolean isLogged() {
-		return isLogged;
+	public ProjectItem getProjectItem(long ProjectUID) {
+		return new ProjectItem();
+		// TODO:add real code in this method
 	}
-
 	// setters ... actually I don't want any others outside of this class to
 	// modify anything.
 

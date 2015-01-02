@@ -20,14 +20,11 @@
 设置申报表提交时限，管理项目组，批量打印，检索项目，生成组员信息表格xlsx
 
 
-context-praram 命名规范
-表单字段：
-FormUserNameId :用户名所存属性名
-FormPasswordId :用户密码所存属性名
-Session属性：
+
 url命名规范
-xxxPage：V
-xxx:S
+viewXXX/XXXPage：V
+XXX:c
+
 
 申报表列表
 功能
@@ -38,6 +35,9 @@ xxx:S
 	
 		以学号为索引实现Java.util.Map 2012 0901 0218 分为三段来实现一个HANSHTABLE
 		为加快用户访问速度，将访问过的用户信息储存到一个Map中去，Map最大储存100条信息，拟采用先来先出置换算法
+CurrentUser:目前登陆的用户,不同的CurrentUser对应着不同的session
+
+
 		
 		
 	

@@ -1,12 +1,20 @@
 package com.RS.model;
 
+import java.util.ArrayList;
+
 public class DataBaseInterface {
 	
+<<<<<<< HEAD
 	public CurrentUserInformation DBgetUserInfomation(String UserName) {
 		return new CurrentUserInformation();
 	}
 
 	public boolean DBisValidUser(String userName, String password) {
+=======
+
+	
+
+>>>>>>> origin/DevelopmentOfFirstTime
 		return true;
 	}
 	
@@ -20,6 +28,23 @@ public class DataBaseInterface {
 	}
 	
 	public DataBaseInterface() {
-		
+
+	}
+
+	public void getCurrentUserProjectItems(String userId,
+			ArrayList<ProjectItem> projects) {
+
+	}
+
+	public void getCurrentUserProjectItems(String userId, String password,ArrayList<ProjectItem> projects) {
+
+	}
+
+	public String getUserName(String userId) {
+		return "";
+	}
+	
+	public boolean deleteProjectItem(long projectUID){
+		return true;
 	}
 }
