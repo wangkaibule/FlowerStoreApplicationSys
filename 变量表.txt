@@ -1,6 +1,6 @@
 attributes
 	session : UserInformation(CurrentUserInformation)
-		  usrProjectItems(ArrayList) List of Projects that CurrentUser have
+		  usrProjectItems(ProjectItem[]) List of Projects that CurrentUser have
 		   
 	request:
 		PendingProject(ProjectItem) List of Projects that pending to be modified ,printed,etc.

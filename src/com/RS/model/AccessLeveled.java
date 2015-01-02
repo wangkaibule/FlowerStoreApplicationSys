@@ -1,7 +1,5 @@
 package com.RS.model;
 
-import java.util.BitSet;
-
 public interface AccessLeveled {
 	static final int posRemovable = 0;
 	static final int posModifiable = 1;

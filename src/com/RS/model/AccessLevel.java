@@ -2,15 +2,9 @@ package com.RS.model;
 
 import java.util.BitSet;
 
-import com.sun.glass.ui.Window.Level;
-
 public class AccessLevel implements AccessLeveled {
 	private BitSet level;
-	private AccessLeveled leveledItem;
-	
-	
 	public AccessLevel(AccessLeveled o){
-		leveledItem = o;
 		level = new BitSet(5);
 		
 		level.clear();

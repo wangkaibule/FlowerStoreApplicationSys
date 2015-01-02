@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 
 /**
  * 
- * @author wangkaibule
- * the class holds a project infomation ,in order to add,modify,delete the specific 
+ * the class holds a project information ,
+ * in order to add,
+ * modify,delete the specific 
  * project in database
  *
  */
@@ -18,6 +19,10 @@ public class ProjectItem implements AccessLeveled{
 	//private projectContent content;
 
 	public ProjectItem() {
+		//FIXME new ProjectItem should be created only during specific time range.
+		
+		//TODO if in some conditions I don't want to create a real new projectItem(not in the right time ,etc.) I should set the projectUID to -1L .
+		  
 		projectUID = 0;
 		memInfo = new ArrayList<TeamMemberInfo>();
 		subject ="";

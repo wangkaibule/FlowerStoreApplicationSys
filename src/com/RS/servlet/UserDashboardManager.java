@@ -2,18 +2,14 @@ package com.RS.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
-
+import com.RS.model.AccessLeveled;
 import com.RS.model.CurrentUserInformation;
-import com.RS.model.ProjectItem;
 
 /**
  * Implementation manipulations to project files
@@ -57,42 +53,42 @@ public class UserDashboardManager extends HttpServlet {
 
 			if (strProjectUID != null) {
 				long ProjectUID = Long.parseLong(strProjectUID);
-				ProjectItem pendingProject = null;
+				AccessLeveled pendingProject = null;
 
 				switch (Integer.parseInt(strRequestMethod)) {
 				case RQ_DELETE:
 					info.deleteProjectItem(ProjectUID);
 					response.sendRedirect(response
 							.encodeRedirectURL("DashBoard"));
-					break;
+					return;
 				case RQ_NEW:
 					pendingProject = info.addProjectItem();
 					request.setAttribute("PendingProject", pendingProject);
 					request.getRequestDispatcher("ProjectContentManager")
 							.forward(request, response);
-					break;
+					return;
 				case RQ_MODIFY:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
 					request.getRequestDispatcher("ProjectContentManager")
 							.forward(request, response);
-					break;
+					return;
 				case RQ_PRINTSELECTION:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
 					request.getRequestDispatcher("ProjectPrintManager")
 							.forward(request, response);
-					break;
+					return;
 				case RQ_VIEWDETAIL:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
 					request.getRequestDispatcher("viewProjectDetail").forward(request, response);
-					break;
+					return;
 				default:
-					response.sendError(response.SC_NO_CONTENT);
+					response.sendError(HttpServletResponse.SC_NO_CONTENT);
 				}
 			} else {
-				response.sendError(response.SC_NO_CONTENT);
+				response.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
 
 		}
@@ -122,10 +118,10 @@ public class UserDashboardManager extends HttpServlet {
 				}
 				response.sendRedirect(response.encodeRedirectURL("DashBoard"));
 
-				break;
+				return;
 			case RQ_PRINTSELECTION:
-				ArrayList<ProjectItem> pendingProjects = new ArrayList<ProjectItem>();
-				ProjectItem tempP = null;
+				ArrayList<AccessLeveled> pendingProjects = new ArrayList<AccessLeveled>();
+				AccessLeveled tempP = null;
 
 				for (int i = 0; i < CheckedProjects.length; i++) {
 					tempP = info.getProjectItem(Long
@@ -135,13 +131,15 @@ public class UserDashboardManager extends HttpServlet {
 
 				request.getRequestDispatcher("ProjectPrintManager").forward(
 						request, response);
-				break;
+				return;
 			default:
-				response.sendError(response.SC_NO_CONTENT);
+				response.sendError(HttpServletResponse.SC_NO_CONTENT);
+				return;
 			}
 
 		} else {
-			response.sendError(response.SC_NO_CONTENT);
+			response.sendError(HttpServletResponse.SC_NO_CONTENT);
+			return;
 		}
 
 	}

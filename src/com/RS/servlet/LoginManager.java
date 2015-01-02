@@ -33,6 +33,7 @@ public class LoginManager extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.sendRedirect("LoginPage");
+		
 	}
 
 	/**
@@ -55,6 +56,7 @@ public class LoginManager extends HttpServlet {
 		if(formPassword == null || formPassword.length()==0){
 			if(formUserName == null || formUserName.length() == 0){
 				response.sendRedirect("LoginPage?status=emptyUsrN");
+				return;
 			}else{
 				UsrInfo = new CurrentUserInformation(formUserName);
 				
@@ -63,6 +65,7 @@ public class LoginManager extends HttpServlet {
 
 			if(!DB.DBisValidUser(formUserName,formPassword)){
 				response.sendRedirect("LoginPage?status=LoginErr");
+				return;
 			}else{
 				UsrInfo = new CurrentUserInformation(formUserName, formPassword);
 			}
@@ -71,6 +74,7 @@ public class LoginManager extends HttpServlet {
 		HttpSession session = request.getSession();
 		session.setAttribute("UserInformation", UsrInfo);
 		response.sendRedirect(response.encodeRedirectURL("/DashBoard"));
+		return;
 	}
 
 }
