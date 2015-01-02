@@ -91,6 +91,11 @@ public class ProjectItem implements AccessLeveled{
 		
 		return new AccessLevel(this);
 	}
+
+	@Override
+	public ProjectItem getProjectItem() {
+		return this;
+	}
 	
 	
 }

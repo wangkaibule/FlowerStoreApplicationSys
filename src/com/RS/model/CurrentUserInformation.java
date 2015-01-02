@@ -3,6 +3,7 @@ package com.RS.model;
 import java.util.ArrayList;
 
 import com.RS.model.level.Modifiable;
+import com.RS.model.level.Removable;
 
 public class CurrentUserInformation implements java.io.Serializable {
 
@@ -28,17 +29,18 @@ public class CurrentUserInformation implements java.io.Serializable {
 		this.userId = userId;
 		this.userName = DataBaseInterface.getUserName(userId);
 		DataBaseInterface.getCurrentUserProjectItems(userId, projects);
+		
 
 	}
 
 	public boolean deleteProjectItem(long projectUID) {
-		ProjectItem[] projectArray = (ProjectItem[]) projects.toArray();
+		AccessLeveled[] projectArray = (AccessLeveled[]) projects.toArray();
 		boolean isSuccess = false;
 		new DataBaseInterface();
 
 		for (int i = 0; i < projectArray.length; i++) {
 			if (projectArray[i].getProjectUID() == projectUID) {
-				if (((AccessLeveled) projectArray[i]).getLevel().isRemovable()) {
+				if (projectArray[i].getLevel().isRemovable()) {
 					isSuccess = DataBaseInterface.deleteProjectItem(projectUID);
 					break;
 				}
@@ -52,6 +54,7 @@ public class CurrentUserInformation implements java.io.Serializable {
 		AccessLeveled newItem = new ProjectItem();
 		
 		newItem = new Modifiable(newItem);
+		newItem = new Removable(newItem);
 		projects.add(newItem);
 		return newItem;		
 	}

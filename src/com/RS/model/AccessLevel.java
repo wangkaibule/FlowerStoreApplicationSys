@@ -4,9 +4,10 @@ import java.util.BitSet;
 
 public class AccessLevel implements AccessLeveled {
 	private BitSet level;
+	private AccessLeveled leveledItem;
 	public AccessLevel(AccessLeveled o){
 		level = new BitSet(5);
-		
+		leveledItem = o;
 		level.clear();
 	}
 
@@ -36,7 +37,19 @@ public class AccessLevel implements AccessLeveled {
 
 	@Override
 	public AccessLevel getLevel() {
-		return this;
+		return leveledItem.getLevel();
+	}
+
+	@Override
+	public ProjectItem getProjectItem() {
+		
+		return leveledItem.getProjectItem();
+	}
+
+	@Override
+	public long getProjectUID() {
+		// TODO Auto-generated method stub
+		return leveledItem.getProjectUID();
 	}
 	
 	
