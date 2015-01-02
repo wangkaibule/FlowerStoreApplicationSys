@@ -4,17 +4,12 @@ import java.util.ArrayList;
 
 public class DataBaseInterface {
 	
-<<<<<<< HEAD
 	public CurrentUserInformation DBgetUserInfomation(String UserName) {
 		return new CurrentUserInformation();
 	}
 
 	public boolean DBisValidUser(String userName, String password) {
-=======
 
-	
-
->>>>>>> origin/DevelopmentOfFirstTime
 		return true;
 	}
 	
