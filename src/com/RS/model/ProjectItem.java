@@ -11,17 +11,16 @@ import java.sql.ResultSet;
  * project in database
  *
  */
-public class ProjectItem {
-	private String ProjectFileId;
-	private ArrayList<TeamMemberInfo> memInfo;
-	private String projectUID;
-	private String projectSummary;
-	private String subject;
+public class ProjectItem implements AccessLeveled{
+	 protected ArrayList<TeamMemberInfo> memInfo;
+	 protected long projectUID;
+	 protected String subject;
 	//private projectContent content;
 
 	public ProjectItem() {
-		ProjectFileId = "";
+		projectUID = 0;
 		memInfo = new ArrayList<TeamMemberInfo>();
+		subject ="";
 	}
 	
 	public void fillInfoWithDBset(ResultSet set){
@@ -32,14 +31,23 @@ public class ProjectItem {
 		return new ArrayList<ProjectItem>().iterator();
 	}
 
+	
+	public static ProjectItem createProject(){
+		return new ProjectItem();
+		//TODO:fill this place with real code
+	}
+	
+	public static ProjectItem getProject(long ProjectUID){
+		return new ProjectItem();
+		//TODO:fill this place with real code
+	}
+	
+	public  boolean DeleteProject(long ProjectUID){
+		return true;
+	}
+	
 	//getters and setters 
-	public String getProjectFileId() {
-		return ProjectFileId;
-	}
 
-	public void setProjectFileId(String projectFileId) {
-		ProjectFileId = projectFileId;
-	}
 	
 	public Iterator<TeamMemberInfo> getMemInfo() {
 		return memInfo.iterator();
@@ -49,11 +57,11 @@ public class ProjectItem {
 		this.memInfo.add(memInfo);
 	}
 
-	public String getProjectUID() {
+	public long getProjectUID() {
 		return projectUID;
 	}
 
-	private void setProjectUID(String projectUID) {
+	private void setProjectUID(long projectUID) {
 		this.projectUID = projectUID;
 	}
 
@@ -71,6 +79,12 @@ public class ProjectItem {
 
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+
+	@Override
+	public AccessLevel getLevel() {
+		
+		return new AccessLevel(this);
 	}
 	
 	

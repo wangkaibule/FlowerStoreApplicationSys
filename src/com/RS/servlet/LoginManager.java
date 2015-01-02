@@ -41,7 +41,6 @@ public class LoginManager extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		ServletContext servContext = request.getServletContext();
 		
 		String formUserNameId = "UserN";
 		String formPasswordId = "Password";
@@ -62,7 +61,6 @@ public class LoginManager extends HttpServlet {
 			}
 		}else{
 
-			UsrInfo = new CurrentUserInformation();
 			if(!DB.DBisValidUser(formUserName,formPassword)){
 				response.sendRedirect("LoginPage?status=LoginErr");
 			}else{

@@ -1,6 +1,12 @@
 attributes
-	session : UserInfomation(CurrentUserInfomation)
-		  ProjectItems(Iterator)
-
+	session : UserInformation(CurrentUserInformation)
+		  usrProjectItems(ArrayList) List of Projects that CurrentUser have
+		   
+	request:
+		PendingProject(ProjectItem) List of Projects that pending to be modified ,printed,etc.
+		PendingProjects(ArrayList) 
+		ProjectItem(ProjectItem) ProjectItem object used by ProjectContentManager		
 parameters :
 	request : method(int) controller specific request parameter,used to differ the different requests for the same servlet.
+			  ProjectUID(long) Unique Identification to identify a specific project file.
+			  CheckedProjects(long) array of ProjectUID of those projects that are selected
