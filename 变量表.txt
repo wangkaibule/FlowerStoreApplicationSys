@@ -7,6 +7,8 @@ attributes
 		PendingProjects(ArrayList) 
 		ProjectItem(ProjectItem) ProjectItem object used by ProjectContentManager		
 parameters :
+	PendingProjectType(static int [ProjectContentManager]) used to identify the type of project.
 	request : method(int) controller specific request parameter,used to differ the different requests for the same servlet.
 			  ProjectUID(long) Unique Identification to identify a specific project file.
 			  CheckedProjects(long) array of ProjectUID of those projects that are selected
+			  part(int) used to determine which part of projectItem should be updated.

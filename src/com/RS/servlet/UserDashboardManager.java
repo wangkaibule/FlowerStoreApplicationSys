@@ -15,6 +15,8 @@ import com.RS.model.CurrentUserInformation;
  * Implementation manipulations to project files
  * 
  */
+//TODO DASHBOARD viewer should help manager to identify the type of project by set the PendingProjectType request parameter.
+
 @WebServlet("/DashBoard")
 public class UserDashboardManager extends HttpServlet {
 	private static final int RQ_NEW = 0;

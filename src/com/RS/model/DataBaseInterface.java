@@ -49,4 +49,9 @@ public class DataBaseInterface {
 	static public boolean getUserProgressStatus(String userId){
 		return true ;
 	}
+	static public boolean updatePart(long projectUID,int part){
+		
+		String sql="SELECT ";
+		return true;
+	}
 }
