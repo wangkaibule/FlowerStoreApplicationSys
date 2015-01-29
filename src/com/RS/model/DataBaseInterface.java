@@ -49,9 +49,24 @@ public class DataBaseInterface {
 	static public boolean getUserProgressStatus(String userId){
 		return true ;
 	}
-	static public boolean updatePart(long projectUID,int part){
+	static public boolean updatePart(ProjectItem project,int part){
 		
 		String sql="SELECT ";
 		return true;
+	}
+
+	public static ProjectItem getProjectItem(long projectUID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static ProjectItem createProject(int projectType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static boolean updatePart(ProjectItem projectItem) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
