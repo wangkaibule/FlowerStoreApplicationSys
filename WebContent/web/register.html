@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+	function isvalid() {
+		var psd = document.getElementById("psd").value;
+		var cfmpsd = document.getElementById("cfmpsd").value;
+		if (psd === cfmpsd) {
+			document.getElementById("submit").disabled = false;
+		}
+	}
+
+	$(document).ready(function() {
+		$("#cfmpsd").keyup(isvalid);
+	});
+</script>
+</head>
+<body>
+	<form class="cregister" id="iregister" action="RegisterManager"
+		method="post">
+		<p>姓名：</p>
+		<input type="text" name="RegName"><br>
+		<p>学号：</p>
+		<input type="text" name="RegID"><br>
+		<p>密码：</p>
+		<input id="psd" type="password" name="Password"><br>
+		<p>确认密码：</p>
+		<input id="cfmpsd" type="password"><br> <input
+			id="submit" type="submit" disabled>
+	</form>
+
+
+</body>
+</html>
