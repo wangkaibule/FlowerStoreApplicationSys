@@ -1,8 +1,10 @@
 package com.RS.model;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.sql.ResultSet;
+
+import com.RS.model.AllKindsOfForms.Forms;
 
 /**
  * 
@@ -12,10 +14,12 @@ import java.sql.ResultSet;
  * project in database
  *
  */
-public class ProjectItem implements AccessLeveled{
+public abstract class ProjectItem implements AccessLeveled{
 	 protected ArrayList<TeamMemberInfo> memInfo;
 	 protected long projectUID;
 	 protected String subject;
+	 protected CreateForms createForms;
+	 protected Forms form;
 	//private projectContent content;
 
 	public ProjectItem() {
@@ -36,10 +40,11 @@ public class ProjectItem implements AccessLeveled{
 		return new ArrayList<ProjectItem>().iterator();
 	}
 
-	
-	public static ProjectItem createProject(){
-		return new ProjectItem();
-		//TODO:fill this place with real code
+	/**
+	 * separate the part that varies.
+	 */
+	public void createProject(){
+		this.form = createForms.performCreateForm();
 	}
 	
 	public static ProjectItem getProject(long ProjectUID){
@@ -53,6 +58,9 @@ public class ProjectItem implements AccessLeveled{
 	
 	//getters and setters 
 
+	public void setCreateForms(CreateForms cf){
+		this.createForms = cf;
+	}
 	
 	public Iterator<TeamMemberInfo> getMemInfo() {
 		return memInfo.iterator();
