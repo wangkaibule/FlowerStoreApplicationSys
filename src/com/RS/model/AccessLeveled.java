@@ -7,6 +7,7 @@ public interface AccessLeveled {
 	static final int posViewable = 3;
 	static final int posAddable = 4;
 	public AccessLevel getLevel();
-	public ProjectItem getProjectItem();
+	public ProjectInfo getProjectItem();
 	public long getProjectUID();
+	public String getProjectTitle();
 }

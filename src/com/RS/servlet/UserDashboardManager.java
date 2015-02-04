@@ -2,14 +2,17 @@ package com.RS.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.RS.model.AccessLeveled;
 import com.RS.model.CurrentUserInformation;
+import com.RS.model.ProjectInfo;
 
 /**
  * Implementation manipulations to project files
@@ -33,6 +36,9 @@ public class UserDashboardManager extends HttpServlet {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void init(){
+		getServletContext().setAttribute("DashBoard", this);
+	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -47,32 +53,27 @@ public class UserDashboardManager extends HttpServlet {
 		if (strRequestMethod == null) {
 
 			request.setAttribute("usrProjectItems", info.getProjects());
-			request.getRequestDispatcher("viewDashBoard").forward(request,
+			request.getRequestDispatcher("DashBoardPage.jsp").forward(request,
 					response);
 
 		} else {
 			String strProjectUID = request.getParameter("ProjectUID");
+			int method = Integer.parseInt(strRequestMethod);
+			AccessLeveled pendingProject = null;
 
 			if (strProjectUID != null) {
 				long ProjectUID = Long.parseLong(strProjectUID);
-				AccessLeveled pendingProject = null;
 
-				switch (Integer.parseInt(strRequestMethod)) {
+				switch (method) {
 				case RQ_DELETE:
 					info.deleteProjectItem(ProjectUID);
 					response.sendRedirect(response
 							.encodeRedirectURL("DashBoard"));
 					return;
-				case RQ_NEW:
-					pendingProject = info.addProjectItem();
-					request.setAttribute("PendingProject", pendingProject);
-					request.getRequestDispatcher("ProjectContentManager")
-							.forward(request, response);
-					return;
 				case RQ_MODIFY:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
-					request.getRequestDispatcher("ProjectContentManager")
+					request.getRequestDispatcher("Modify")
 							.forward(request, response);
 					return;
 				case RQ_PRINTSELECTION:
@@ -90,6 +91,15 @@ public class UserDashboardManager extends HttpServlet {
 					response.sendError(HttpServletResponse.SC_NO_CONTENT);
 				}
 			} else {
+				switch(method){
+				case RQ_NEW:
+					String strProjectType = request.getParameter("ProjectType");
+					pendingProject = info.addProjectItem(Integer.parseInt(strProjectType));
+					request.setAttribute("PendingProject", pendingProject);
+					request.getRequestDispatcher("Modify")
+							.forward(request, response);
+					return;
+				}
 				response.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
 
@@ -147,24 +157,31 @@ public class UserDashboardManager extends HttpServlet {
 	}
 
 	// getters and setters
-	public static int getRqNew() {
+	public int getRqNew() {
 		return RQ_NEW;
 	}
 
-	public static int getRqModify() {
+	public int getRqModify() {
 		return RQ_MODIFY;
 	}
 
-	public static int getRqDelete() {
+	public int getRqDelete() {
 		return RQ_DELETE;
 	}
 
-	public static int getRqPrintselection() {
+	public int getRqPrintselection() {
 		return RQ_PRINTSELECTION;
 	}
 
-	public static int getRqViewdetail() {
+	public int getRqViewdetail() {
 		return RQ_VIEWDETAIL;
 	}
 
+	public int getProjectTypeApplication(){
+		return ProjectInfo.projectTypeApplication;
+	}
+	
+	public int getProjectTypeSummary(){
+		return ProjectInfo.projectTypeSummary;
+	}
 }

@@ -1,11 +1,16 @@
 package com.RS.model;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class DataBaseInterface {
 	
+	static public void executePSQL(String sql,String ... parameters){
+		;
+	}
+	
 	static public CurrentUserInformation DBgetUserInfomation(String UserName) {
-		return new CurrentUserInformation();
+		return new CurrentUserInformation(UserName);
 	}
 
 	static public boolean DBisValidUser(String userName, String password) {
@@ -15,7 +20,7 @@ public class DataBaseInterface {
 	
 	static public boolean isUserNameExit(String regName, String regID){
 		String sql = "select * from LeaderTable where name=? and userId";
-		return false;
+		return true;
 	}
 	
 	static public void executeUpdate(String regName, String regID, String regPassword){
@@ -43,29 +48,26 @@ public class DataBaseInterface {
 		return true;
 	}
 	
-	static public AccessLeveled addProject(){
-		return (AccessLeveled) new ProjectItem();
-	}
 	static public boolean getUserProgressStatus(String userId){
 		return true ;
 	}
-	static public boolean updatePart(ProjectItem project,int part){
+	static public boolean updatePart(ProjectInfo project,int part){
 		
 		String sql="SELECT ";
 		return true;
 	}
 
-	public static ProjectItem getProjectItem(long projectUID) {
+	public static ProjectInfo getProjectItem(long projectUID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static ProjectItem createProject(int projectType) {
+	public static ProjectInfo createProject(int projectType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static boolean updatePart(ProjectItem projectItem) {
+	public static boolean updatePart(ProjectInfo projectItem) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -1,0 +1,96 @@
+@CHARSET "UTF-8";
+.loginForm{
+	display: block;
+	
+}
+.loginForm * input{
+	height: 40px;
+}
+.formWrapper{
+	display:none;
+	margin-top: 130px;
+}
+.LoginFailPrompt{
+	
+}
+
+#forms{
+	/* width:976px; */
+	padding-left: 110px;
+}
+
+#view,#manage{
+	display:block;
+	padding:20px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#view{
+	float:left;
+
+}
+
+#manage{
+	float:right;
+}
+
+.mainMenu{
+	width:696px;
+}
+
+#forms,#mainMenu,.formWrapper{
+	margin-left:auto;
+	margin-right:auto;
+	width: 495px;
+}
+
+div#formViewer {
+    left: -80px;
+    position: relative;
+}
+
+div#formManage{
+	left: -20px;
+	position:relative;
+}
+
+a{
+	color:grey;
+	font-size: x-large;
+}
+
+h1{
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+input{
+		width: 320px;
+		/* height: 60px; */
+		font-size: xx-large;
+}
+
+input[type="submit"] {
+    width: 345px;
+    height: 50px;
+}
+
+input[type="password"] {
+    padding: 10px;
+}
+
+input[type="text"] {
+    padding: 10px;
+}
+
+td {
+    height: 70px;
+}
+
+table * span{
+	font-size:x-large;
+}

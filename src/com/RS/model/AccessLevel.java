@@ -41,7 +41,7 @@ public class AccessLevel implements AccessLeveled {
 	}
 
 	@Override
-	public ProjectItem getProjectItem() {
+	public ProjectInfo getProjectItem() {
 		
 		return leveledItem.getProjectItem();
 	}
@@ -51,6 +51,10 @@ public class AccessLevel implements AccessLeveled {
 		// TODO Auto-generated method stub
 		return leveledItem.getProjectUID();
 	}
-	
-	
+
+	@Override
+	public String getProjectTitle() {
+		// TODO Auto-generated method stub
+		return leveledItem.getProjectTitle();
+	}
 }

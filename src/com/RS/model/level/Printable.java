@@ -2,7 +2,8 @@ package com.RS.model.level;
 
 import com.RS.model.AccessLevel;
 import com.RS.model.AccessLeveled;
-import com.RS.model.ProjectItem;
+import com.RS.model.ProjectInfo;
+import com.RS.model.ProjectInfo;
 
 public class Printable implements AccessLeveled {
 	
@@ -21,7 +22,7 @@ public class Printable implements AccessLeveled {
 	}
 
 	@Override
-	public ProjectItem getProjectItem() {
+	public ProjectInfo getProjectItem() {
 		// TODO Auto-generated method stub
 		return leveledItem.getProjectItem();
 	}
@@ -32,4 +33,9 @@ public class Printable implements AccessLeveled {
 		return leveledItem.getProjectUID();
 	}
 
+	@Override
+	public String getProjectTitle() {
+		// TODO Auto-generated method stub
+		return leveledItem.getProjectTitle();
+	}
 }
