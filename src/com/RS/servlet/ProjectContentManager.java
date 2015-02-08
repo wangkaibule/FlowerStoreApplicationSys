@@ -2,54 +2,75 @@ package com.RS.servlet;
 
 import java.io.IOException;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import com.RS.model.ProjectItem;
+import com.RS.model.AccessLeveled;
+import com.RS.model.ApplicationProject;
+import com.RS.model.ProjectInfo;
 import com.RS.model.ProjectItemLib;
 
 /**
  * Servlet implementation class ProjectContentManager
  */
-@WebServlet("/ProjectContentManager")
+@WebServlet("/Modify")
 public class ProjectContentManager extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final int pTypeApplication = 0;
-	
-
-
-	private static final int pTypeSummary = 1;
 
 	/**
-     * @see HttpServlet#HttpServlet()
-     */
-    public ProjectContentManager() {
-        super();
-        // TODO Auto-generated constructor stub
-        
-    }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public ProjectContentManager() {
+		super();
+		// TODO Auto-generated constructor stub
+
+	}
+
+	public void init(){
+		getServletContext().setAttribute("ContentManager", this);
+	}
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+	HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		ProjectItem project = (ProjectItem)request.getAttribute("PendingProject");
+		AccessLeveled leveledProject = (AccessLeveled) request
+		.getAttribute("PendingProject");
+
+		if (leveledProject == null || !leveledProject.getLevel().isModifiable()) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
+
+		ProjectInfo project = leveledProject.getProjectItem();
 		long projectUID = project.getProjectUID();
-		int projectType = (int)request.getAttribute("PendingProjectType");
-		
-		if(projectUID< 0 ){
+		int projectType = project.getProjectType();
+		HttpSession session = request.getSession(false);
+
+
+		if (projectUID < 0) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}else{
+		} else {
 			switch (projectType) {
-			case pTypeApplication:
-				request.getRequestDispatcher("ApplicationContentViewer").forward(request, response);
+			case ProjectInfo.projectTypeApplication:
+				session.setAttribute("Content", project.getContent());
+				response.sendRedirect(response.encodeRedirectURL("ApplicationEditor.jsp"));
 				break;
-			case pTypeSummary:
-				request.getRequestDispatcher("SummaryContentViewer").forward(request, response);
+			case ProjectInfo.projectTypeSummary:
+				request.getRequestDispatcher("SummaryContentViewer").forward(
+				request, response);
 				break;
 
 			default:
@@ -60,34 +81,52 @@ public class ProjectContentManager extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+	HttpServletResponse response) throws ServletException, IOException {
 
-		//try to save the part of project that just posted,according the post parameter ProjectUID
-		//I am thinking that no problems because of thread synchronization would happen.
-		
+		// try to save the part of project that just posted,according the post
+		// parameter ProjectUID
+		// I am thinking that no problems because of thread synchronization
+		// would happen.
+
 		long projectUID = Long.parseLong(request.getParameter("ProjectUID"));
 		int part = Integer.parseInt(request.getParameter("part"));
-		
+
 		ProjectItemLib lib = ProjectItemLib.getProjectLib();
-		
-		if(lib.update(projectUID, part)){
+
+		if (lib.update(projectUID, part)) {
 			response.sendError(HttpServletResponse.SC_OK);
 			return;
-		}else{
+		} else {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
 	}
-
-	//getters 
-	public static int getPtypeapplication() {
-		return pTypeApplication;
+	
+	public int getProjectTypeApplication(){
+		return ProjectInfo.projectTypeApplication;
 	}
-
-	public static int getPtypesummary() {
-		return pTypeSummary;
+	
+	public int getProjectTypeSummary(){
+		return ProjectInfo.projectTypeSummary;
 	}
-
+	
+	public int getProjectCategoryCreationTrain(){
+		return ApplicationProject.getCategorycreationtrain();
+	}
+	
+	public int getProjectCategoryBussinessTrain(){
+		return ApplicationProject.getCategorybussinesstrain();
+	}
+	
+	public int getProjectCategoryBussinessPractice(){
+		return ApplicationProject.getCategorybussinesspractice();
+	}
+	
+	public int getProjectCategoryUndefined(){
+		return ApplicationProject.getCategoryUndefined();
+	}
 }

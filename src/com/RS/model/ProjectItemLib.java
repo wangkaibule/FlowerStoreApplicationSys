@@ -10,8 +10,8 @@ import java.util.Iterator;
  * the first parts (no. 0 part) should be the title of projects and the list of team members
  * */
 public class ProjectItemLib {
-	private static ProjectItemLib singleton = null;
-	private ArrayList<ProjectItem> projectList;
+	private static ProjectItemLib	singleton	= null;
+	private ArrayList<ProjectInfo>	projectList	= new ArrayList<ProjectInfo>();
 
 	private ProjectItemLib() {
 
@@ -28,22 +28,22 @@ public class ProjectItemLib {
 		}
 	}
 
-	private boolean removeFromList(ProjectItem item) {
+	private boolean removeFromList(ProjectInfo item) {
 		return projectList.remove(item);
 
 	}
-	
-	public boolean removeFromList(int index){
-		if(projectList.remove(index)!=null){
-			return true;
-		}else{
-			return false;
+
+	public void removeFromList(int index) {
+		if (index > -1) {
+			projectList.remove(index);
+		} else {
+			return;
 		}
 	}
 
-	private ProjectItem findProject(long projectUID) {
-		Iterator<ProjectItem> i = projectList.iterator();
-		ProjectItem item = null;
+	private ProjectInfo findProject(long projectUID) {
+		Iterator<ProjectInfo> i = projectList.iterator();
+		ProjectInfo item = null;
 
 		while (i.hasNext()) {
 			item = i.next();
@@ -54,25 +54,25 @@ public class ProjectItemLib {
 
 		return item;
 	}
-	
-	private int findProjectIndex(long projectUID){
-		Iterator<ProjectItem> items = projectList.iterator();
+
+	private int findProjectIndex(long projectUID) {
+		Iterator<ProjectInfo> items = projectList.iterator();
 		int index = 0;
 
-		while(true){
-			if(!items.hasNext()){
+		while (true) {
+			if (!items.hasNext()) {
 				return -1;
-			}else{
-				if(items.next().getProjectUID()==projectUID){
+			} else {
+				if (items.next().getProjectUID() == projectUID) {
 					return index;
-				}else{
+				} else {
 					index++;
 				}
 			}
 		}
 	}
 
-	private void addToList(ProjectItem item) {
+	private void addToList(ProjectInfo item) {
 		projectList.add(item);
 	}
 
@@ -82,8 +82,8 @@ public class ProjectItemLib {
 		return DataBaseInterface.updatePart(findProject(projectUID), part);
 	}
 
-	public ProjectItem getProject(long projectUID) {
-		ProjectItem item = findProject(projectUID);
+	public ProjectInfo getProject(long projectUID) {
+		ProjectInfo item = findProject(projectUID);
 
 		if (item == null) {
 			item = DataBaseInterface.getProjectItem(projectUID);
@@ -98,10 +98,26 @@ public class ProjectItemLib {
 		return item;
 	}
 
-	public ProjectItem createProject(int projectType) {
-		ProjectItem item = null;
+	public void getUserProjects(String UsrName, String pwd,
+	ArrayList<AccessLeveled> list) {
+		String sql = "select ....";
+		// TODO add project to lib list
+		// TODO fetch the projectUID(s) and corresponding access level from
+		// database ,if(-1) then return,else
+		// check if project exists else fetch project item from database
+		// TODO check user access level for every project Item.
+		if (pwd == null) {
+			Tester.fillProjectListAccessLeveled(list, UsrName);
+		} else {
+			Tester.fillProjectListAccessLeveled(list, UsrName, pwd);
+		}
+	}
 
-		item = DataBaseInterface.createProject(projectType);
+	public ProjectInfo createProject(int projectType) {
+		ProjectInfo item = null;
+
+		item = TheFactory.getProjectFactory(projectType).create();
+		
 		if (item != null) {
 			addToList(item);
 		}
@@ -110,22 +126,22 @@ public class ProjectItemLib {
 	}
 
 	public boolean saveProject(long projectUID) {
-		ProjectItem item = findProject(projectUID);
+		ProjectInfo item = findProject(projectUID);
 		boolean isSuccess = true;
 
 		isSuccess &= DataBaseInterface.updatePart(item);
 		isSuccess &= removeFromList(item);
-		
+
 		return isSuccess;
 	}
 
 	public boolean deleteProject(long projectUID) {
-		int index=findProjectIndex(projectUID);
+		int index = findProjectIndex(projectUID);
 		boolean isSuccess = true;
-		
-		isSuccess&=DataBaseInterface.deleteProjectItem(projectUID);
-		isSuccess&=removeFromList(index);
-		
+
+		isSuccess &= DataBaseInterface.deleteProjectItem(projectUID);
+		removeFromList(index);
+
 		return isSuccess;
 	}
 }
