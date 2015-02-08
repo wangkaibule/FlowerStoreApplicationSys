@@ -53,5 +53,4 @@ public abstract class ProjectInfo implements AccessLeveled {
 	public void setModified(boolean b) {
 		this.modified = true;
 	}
-
 }

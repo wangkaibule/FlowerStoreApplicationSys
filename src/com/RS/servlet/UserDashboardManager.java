@@ -95,7 +95,9 @@ public class UserDashboardManager extends HttpServlet {
 				case RQ_NEW:
 					String strProjectType = request.getParameter("ProjectType");
 					pendingProject = info.addProjectItem(Integer.parseInt(strProjectType));
+
 					response.sendRedirect(response.encodeRedirectURL("DashBoard"));
+
 					return;
 				}
 				response.sendError(HttpServletResponse.SC_NO_CONTENT);
