@@ -4269,7 +4269,7 @@ public final class AppProjectContent {
       /**
        * <code>required string name = 1 [default = "-"];</code>
        */
-      public Builder setName(
+      public void setName(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -4277,7 +4277,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000001;
         name_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string name = 1 [default = "-"];</code>
@@ -4318,11 +4318,11 @@ public final class AppProjectContent {
       /**
        * <code>required int32 category = 2 [default = -1];</code>
        */
-      public Builder setCategory(int value) {
+      public void setCategory(int value) {
         bitField0_ |= 0x00000002;
         category_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required int32 category = 2 [default = -1];</code>
@@ -4609,7 +4609,7 @@ public final class AppProjectContent {
       /**
        * <code>required string startTime = 12 [default = ""];</code>
        */
-      public Builder setStartTime(
+      public void setStartTime(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -4617,7 +4617,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000010;
         startTime_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string startTime = 12 [default = ""];</code>
@@ -4685,7 +4685,7 @@ public final class AppProjectContent {
       /**
        * <code>required string finishTime = 13 [default = ""];</code>
        */
-      public Builder setFinishTime(
+      public void setFinishTime(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -4693,7 +4693,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000020;
         finishTime_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string finishTime = 13 [default = ""];</code>
@@ -4761,7 +4761,7 @@ public final class AppProjectContent {
       /**
        * <code>required string backgroundDescription = 3 [default = ""];</code>
        */
-      public Builder setBackgroundDescription(
+      public void setBackgroundDescription(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -4769,7 +4769,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000040;
         backgroundDescription_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string backgroundDescription = 3 [default = ""];</code>
@@ -4837,7 +4837,7 @@ public final class AppProjectContent {
       /**
        * <code>required string projectDescription = 15 [default = ""];</code>
        */
-      public Builder setProjectDescription(
+      public void setProjectDescription(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -4845,7 +4845,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000080;
         projectDescription_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string projectDescription = 15 [default = ""];</code>
@@ -4913,7 +4913,7 @@ public final class AppProjectContent {
       /**
        * <code>required string goalExpectation = 4 [default = ""];</code>
        */
-      public Builder setGoalExpectation(
+      public void setGoalExpectation(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -4921,7 +4921,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000100;
         goalExpectation_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string goalExpectation = 4 [default = ""];</code>
@@ -4989,7 +4989,7 @@ public final class AppProjectContent {
       /**
        * <code>required string projectFeatures = 5 [default = ""];</code>
        */
-      public Builder setProjectFeatures(
+      public void setProjectFeatures(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -4997,7 +4997,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000200;
         projectFeatures_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string projectFeatures = 5 [default = ""];</code>
@@ -5065,7 +5065,7 @@ public final class AppProjectContent {
       /**
        * <code>required string equipmentNeeds = 6 [default = ""];</code>
        */
-      public Builder setEquipmentNeeds(
+      public void setEquipmentNeeds(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -5073,7 +5073,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000400;
         equipmentNeeds_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string equipmentNeeds = 6 [default = ""];</code>
@@ -5141,7 +5141,7 @@ public final class AppProjectContent {
       /**
        * <code>required string financialNeed = 7 [default = ""];</code>
        */
-      public Builder setFinancialNeed(
+      public void setFinancialNeed(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -5149,7 +5149,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00000800;
         financialNeed_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>required string financialNeed = 7 [default = ""];</code>
@@ -5190,11 +5190,11 @@ public final class AppProjectContent {
       /**
        * <code>optional int32 projectClass = 8 [default = -1];</code>
        */
-      public Builder setProjectClass(int value) {
+      public void setProjectClass(int value) {
         bitField0_ |= 0x00001000;
         projectClass_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>optional int32 projectClass = 8 [default = -1];</code>
@@ -5249,7 +5249,7 @@ public final class AppProjectContent {
       /**
        * <code>optional string projectFinalId = 9 [default = "-"];</code>
        */
-      public Builder setProjectFinalId(
+      public void setProjectFinalId(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -5257,7 +5257,7 @@ public final class AppProjectContent {
   bitField0_ |= 0x00002000;
         projectFinalId_ = value;
         onChanged();
-        return this;
+        return;
       }
       /**
        * <code>optional string projectFinalId = 9 [default = "-"];</code>

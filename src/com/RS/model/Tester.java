@@ -50,18 +50,17 @@ public class Tester {
 	public static ProjectInfo createAppllicationProject() {
 		ApplicationProject project = new ApplicationProject();
 		Content.Builder content = project.getContent();
+		Content.MemberInfo.Builder member = Content.MemberInfo.newBuilder();
 
+		member.setName("wangkaibule");
+		member.setDepartment("-");
+		member.setProfession("-");
+		member.setStudentID("201209010218");
+		member.setTel("18330275029");
+		member.setResponsibility("-");
 		content.setName("A New Application Project");
 		project.setProjectUID(0);
-		content.addMembers(
-		Content.MemberInfo.newBuilder()
-		.setName("wangkaibule")
-		.setDepartment("-")
-		.setProfession("-")
-		.setStudentID("201209010218")
-		.setTel("18330275029")
-		.setResponsibility("-")
-		);
+		content.addMembers(member);
 		return project;
 	}
 }

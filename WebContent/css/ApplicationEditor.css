@@ -32,14 +32,22 @@ a {
 }
 
 input.clickable {
-	width:100%;
-	height:50px;
+	/*width:100%;
+	height:50px;*/
 	
 	font-size: large;
-	border-width: 3px;
 }
 
 .wrapInput{
 	width:100%;
 	height:100%;
+	display:table-cell;
+}
+
+.wrapText{
+	text-align: left;
+}
+
+table, th, td {
+   border:1px solid black;
 }

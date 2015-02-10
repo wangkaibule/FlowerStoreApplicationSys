@@ -7,5 +7,4 @@
 	<td style="width: 1.1118in;" class="ce12"><a data-index="${param.nextIndex }" name="studentID" class="blurthensub" href="javascript:;">-</a></td>
 	<td style="width: 1.1118in;" class="ce8"><a data-index="${param.nextIndex }" name="responsibility" class="blurthensub" href="javascript:;">-</a></td>
 	<td style="width: 1.1118in;" class="ce12"><a data-index="${param.nextIndex }" name="tel" class="blurthensub" href="javascript:;">-</a></td>
-	<td style="width: 0.7602in;" class="ce5">&nbsp;</td>
 </tr>

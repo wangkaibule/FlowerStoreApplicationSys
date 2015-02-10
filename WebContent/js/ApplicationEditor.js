@@ -44,19 +44,39 @@ function wrapWithInputChoose(e, theURL) {
 }
 
 function blurThenSubInputBlurEventHandler(e) {
-	alert("submitted...");
 	var pending = $("a.pending");
 	var d = $(e.target);
 	var content = d.val();
+	var origContent = pending.text();
 
+	if (content === "") {
+		content = "-";
+	}
+
+	d.hide();
 	pending.text(content);
-	d.remove();
 	pending.show();
 	pending.removeClass("pending");
+	
+	if(origContent!==d.val()){
+	$.ajax({
+		url : "AppProjectReciever",
+		type : "POST",
+		data : {
+			name : d.attr("name"),
+			index : d.attr("data-Index"),
+			title : d.attr("data-title") + "Update",
+			value : content
+		}
+	})
+	}
+
+	d.remove();
 }
 
 function choosableClickEventHandler(e) {
-	wrapWithInputChoose(e.target,"formPieces/"+$(e.target).attr("name")+".jsp");
+	wrapWithInputChoose(e.target, "formPieces/" + $(e.target).attr("name")
+			+ ".jsp");
 }
 
 function addableClickEventHandler(e) {
@@ -70,13 +90,13 @@ function addableClickEventHandler(e) {
 
 		addParent.before(data);
 		counter.attr("rowspan", parseInt(row) + 1);
+
 		$(".pending").each(function() {
 			this.setAttribute("data-Index", parseInt(Index));
+			this.setAttribute("data-title", theInitiator);
 			$(this).removeClass("pending");
 		})
 	}
-	counter.attr("data-nextIndex", parseInt(Index) + 1);
-	console.log(Index);
 
 	$.ajax({
 		url : "formPieces/" + theInitiator + "Piece.jsp",
@@ -86,14 +106,31 @@ function addableClickEventHandler(e) {
 		},
 		dataType : "html"
 	})
+
+	counter.attr("data-nextIndex", parseInt(Index) + 1);
+	console.log(Index);
+
+	$.ajax({
+		url : "AppProjectReciever",
+		type : "POST",
+		data : {
+			title : add.attr("name") + "Update",
+			index : counter.attr("data-nextIndex"),
+		}
+	})
+
 }
+
 function blurThenSubInputClickEventHandler(event) {
 	var e = event.target;
-	var theInput = wrapWithInputClick(e);
-
-	$(e).addClass("pending");
-	$(theInput).blur(blurThenSubInputBlurEventHandler);
-
+	if ($(e).is("a")) {
+		var element = $(e);
+		var theInput = $(wrapWithInputClick(e));
+		element.addClass("pending");
+		theInput.attr("data-Index",element.attr("data-Index"));
+		theInput.attr("data-title",element.attr("data-title"));
+		theInput.on("blur",blurThenSubInputBlurEventHandler);
+	}
 }
 
 function blurThenSubInputFocusEventHandler(event) {
@@ -103,12 +140,22 @@ function blurThenSubInputFocusEventHandler(event) {
 	}
 }
 
-function editableInputFocusEventHandler(event) {
+function editableInputClickEventHandler(event) {
 	var e = $(event.target);
+	var theInput = $($("#protoTextarea")[0].cloneNode());
+	var theElementName = e.attr("name");
 
-	if (e.is("textarea")) {
-		wrapWithInputClick(e[0]);
+	if (e.is("td")) {
+		theInput.removeAttr("id").removeAttr("style").attr("name",
+				theElementName).addClass(e.attr("class"));
+		theInput.val(e.children("p").hide().text());
+		e.append(theInput);
+		theInput.focus();
 	}
+}
+
+function editableChildrenClickEventHandler(e){
+	$(e.target).parent().click();
 }
 
 function init() {
@@ -117,6 +164,7 @@ function init() {
 	$('body').on("click", ".blurthensub", blurThenSubInputClickEventHandler);
 	$('body').on("focus", ".blurthensub", blurThenSubInputFocusEventHandler);
 	$('body').on("click", ".addable", addableClickEventHandler);
-	$('body').on("focus", ".editable", editableInputFocusEventHandler);
-	$("#memberInfoTitle").attr("rowspan",$(".roMemberList").length);
+	$('body').on("click", ".editable", editableInputClickEventHandler);
+	$('body').on("click",".editable > ",editableChildrenClickEventHandler);
+	$("#memberInfoTitle").attr("rowspan", $(".roMemberList").length);
 }
