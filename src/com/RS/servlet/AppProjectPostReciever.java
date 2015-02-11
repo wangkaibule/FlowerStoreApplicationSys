@@ -35,8 +35,7 @@ public class AppProjectPostReciever extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 	HttpServletResponse response) throws ServletException, IOException {
-		//response.sendError(HttpServletResponse.SC_NO_CONTENT);
-		doPost(request,response);
+		response.sendError(HttpServletResponse.SC_NO_CONTENT);
 	}
 
 	/**

@@ -86,24 +86,8 @@ public class ProjectContentManager extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 	HttpServletResponse response) throws ServletException, IOException {
-
-		// try to save the part of project that just posted,according the post
-		// parameter ProjectUID
-		// I am thinking that no problems because of thread synchronization
-		// would happen.
-
-		long projectUID = Long.parseLong(request.getParameter("ProjectUID"));
-		int part = Integer.parseInt(request.getParameter("part"));
-
-		ProjectItemLib lib = ProjectItemLib.getProjectLib();
-
-		if (lib.update(projectUID, part)) {
-			response.sendError(HttpServletResponse.SC_OK);
-			return;
-		} else {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return;
-		}
+		response.sendError(HttpServletResponse.SC_NO_CONTENT);
+		return;
 	}
 	
 	public int getProjectTypeApplication(){
