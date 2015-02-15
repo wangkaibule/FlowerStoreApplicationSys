@@ -1,6 +1,11 @@
 package com.RS.servlet;
 
 import java.io.IOException;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -10,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.jdbc.pool.DataSource;
+
 import com.RS.model.*;
 
 /**
@@ -17,14 +24,15 @@ import com.RS.model.*;
  */
 @WebServlet("/Login")
 public class LoginManager extends HttpServlet {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private static final String		formUserNameId		= "UserN";
-	private static final String		formPasswordId		= "Password";
-	private static final String		formTypeId			= "formType";
-	private static final String		formRealNameId		= "realName";
-	private static final int			formTypeManage		= 1;
-	private static final int			formTypeViewer		= 0;
+	private static final String formUserNameId = "UserN";
+	private static final String formPasswordId = "Password";
+	private static final String formTypeId = "formType";
+	private static final String formRealNameId = "realName";
+	private static final int formTypeManage = 1;
+	private static final int formTypeViewer = 0;
+	public static final int statusRegSuccessful = 1;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -33,17 +41,18 @@ public class LoginManager extends HttpServlet {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	public void init(){
+
+	public void init() {
 		try {
 			super.init();
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		getServletContext().setAttribute("LoginManager", this);
 	}
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -76,13 +85,15 @@ public class LoginManager extends HttpServlet {
 		}
 
 		int formType = Integer.parseInt(strFormType);
+		DB db = new DB();
+
 		switch (formType) {
 		case formTypeManage:
 
 			String formPassword = request.getParameter(formPasswordId);
 
 			if (formPassword != null && formUserName != null
-			&& DataBaseInterface.DBisValidUser(formUserName, formPassword)) {
+			&& db.isValidUser(formUserName, formPassword)) {
 				UsrInfo = new CurrentUserInformation(formUserName, formPassword);
 			} else {
 				request.setAttribute("invalidPWD", true);
@@ -96,8 +107,8 @@ public class LoginManager extends HttpServlet {
 			String formUserRealName = request.getParameter(formRealNameId);
 
 			if (formUserName != null && formUserRealName != null
-			&& DataBaseInterface
-			.isUserNameExit(formUserRealName, formUserName)) {
+			&& db
+			.isUserNameExist(formUserRealName, formUserName)) {
 
 				UsrInfo = new CurrentUserInformation(formUserName);
 			} else {
@@ -118,6 +129,53 @@ public class LoginManager extends HttpServlet {
 		session.setAttribute("UserInformation", UsrInfo);
 		response.sendRedirect(response.encodeRedirectURL("./DashBoard"));
 		return;
+	}
+
+	private static class DB extends DBConnection {
+		private DataSource pool = null;
+
+		DB() {
+			pool = getPool();
+		}
+
+		private boolean isValidUser(String userID, String userPWD) {
+			final String sql = "call isValidUser(?,?,?)";
+
+			try {
+				CallableStatement statement = pool.getConnection().prepareCall(
+				sql);
+				statement.registerOutParameter(3, Types.INTEGER);
+				statement.setString(1, userID);
+				statement.setString(2, userPWD);
+
+				statement.execute();
+
+				return statement.getBoolean(3);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		private boolean isUserNameExist(String realName, String userID) {
+			final String sql = "select count(*) where memberRealName=? and memberID = ? limit 1";
+			ResultSet result = null;
+
+			try {
+				PreparedStatement statement = pool.getConnection()
+				.prepareStatement(sql);
+				statement.setString(1, realName);
+				statement.setString(2, userID);
+
+				statement.execute();
+				result = statement.getResultSet();
+
+				return result.first();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
 	}
 
 	public String getFormusernameid() {
@@ -142,5 +200,9 @@ public class LoginManager extends HttpServlet {
 
 	public int getFormtypeviewer() {
 		return formTypeViewer;
+	}
+
+	public int getStatusRegSuccessful() {
+		return statusRegSuccessful;
 	}
 }

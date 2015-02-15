@@ -2,6 +2,7 @@ package com.RS.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.RS.model.AppProjectContent.Content;
 
@@ -14,8 +15,9 @@ public class ApplicationProject extends ProjectInfo {
 
 	private static final String sqlLoadEntity = "select ....";
 
-	private ArrayList<TeamMemberInfo> members = new ArrayList<TeamMemberInfo>();
 	private Content.Builder theContent = null;
+	private boolean memberDeleted = false;
+	private List<Integer> deletedMemberIndex = null;
 
 	public ApplicationProject() {
 		pItem = this;
@@ -34,6 +36,11 @@ public class ApplicationProject extends ProjectInfo {
 		return categoryBussinessPractice;
 	}
 
+	public static int getCategoryUndefined() {
+		// TODO Auto-generated method stub
+		return categoryUndefined;
+	}
+
 	@Override
 	public int getProjectType() {
 		return projectTypeApplication;
@@ -46,15 +53,14 @@ public class ApplicationProject extends ProjectInfo {
 	}
 
 	@Override
-	public String getAuthor() {
+	public String getAuthorName() {
 		// TODO Auto-generated method stub
-		return members.get(0).getName();
+		return theContent.getMembers(0).getName();
 	}
 
 	@Override
 	public void fillAuthorInfo(TeamMemberInfo info) {
-		members.add(info);
-
+		theContent.addMembers(info.builder());
 	}
 
 	@Override
@@ -63,19 +69,45 @@ public class ApplicationProject extends ProjectInfo {
 		return theContent;
 	}
 
-	public TeamMemberInfo addTeamMember() {
-		TeamMemberInfo newInfo = new TeamMemberInfo();
-		members.add(newInfo);
-
-		return newInfo;
+	@Override
+	protected void storeContent() {
+		if(!modified){
+			return;
+		}else{
+			if(memberDeleted){
+				//TODO TO BE CONTINUED tomorrow...
+			}
+		}
 	}
 
 	public void deleteTeamMember(int index) {
-		members.remove(index);
+		if (deletedMemberIndex == null) {
+			modified = true;
+			memberDeleted = true;
+			deletedMemberIndex = new ArrayList<Integer>();
+		}
+
+		deletedMemberIndex.add(index);
 	}
 
-	public static int getCategoryUndefined() {
-		// TODO Auto-generated method stub
-		return categoryUndefined;
+	private List<Content.MemberInfo> recreateMemberBuilder() {
+		List<Content.MemberInfo> origList = theContent.getMembersList();
+		int origListSize = origList.size();
+		int deletedListSize = deletedMemberIndex.size();
+		List<Content.MemberInfo> deleteList = new ArrayList<Content.MemberInfo>();
+
+		theContent.clearMembers();
+
+		int j = 0;
+		for (int i = 0; i < origListSize ; i++) {
+			if ( j <= deletedListSize && deletedMemberIndex.get(j) == i) {
+				deleteList.add(origList.get(i));
+				j++;
+				continue;
+			} else {
+				theContent.addMembers(origList.get(i));
+			}
+		}
+		return deleteList;
 	}
 }

@@ -108,4 +108,10 @@ public class CurrentUserInformation {
 	public boolean isInProgress() {
 		return inProgress;
 	}
+	
+	public void onDestroy(){
+		for(AccessLeveled project:projects){
+			project.getProjectItem().updateModification();
+		}
+	}
 }

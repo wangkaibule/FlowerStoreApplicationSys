@@ -1,71 +1,23 @@
 package com.RS.model;
 
+import com.RS.model.AppProjectContent.Content;
+
 public class TeamMemberInfo {
 
-	private String	name			= "";
-	private String	department		= "";
-	private String	profession		= "";
-	private String	studentID		= "";
-	private String	responsibility	= "";
-	private String	tel				= "";
+	public String	name			= "新成员";
+	public String	department		= "-";
+	public String	profession		= "-";
+	public String	studentID		= "-";
+	public String	responsibility	= "-";
+	public String	tel				= "-";
 
-	public TeamMemberInfo() {
-
-	}
-	
-	public TeamMemberInfo(String userID){
-		
-	}
-
-	public TeamMemberInfo(long projectUID) {
-
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
-	}
-
-	public String getProfession() {
-		return profession;
-	}
-
-	public void setProfession(String profession) {
-		this.profession = profession;
-	}
-
-	public String getStudentID() {
-		return studentID;
-	}
-
-	public void setStudentID(String studentID) {
-		this.studentID = studentID;
-	}
-
-	public String getResponsibility() {
-		return responsibility;
-	}
-
-	public void setResponsibility(String responsibility) {
-		this.responsibility = responsibility;
-	}
-
-	public String getTel() {
-		return tel;
-	}
-
-	public void setTel(String tel) {
-		this.tel = tel;
+	public Content.MemberInfo.Builder builder(){
+		return Content.MemberInfo.newBuilder()
+		.setName(this.name)
+		.setDepartment(this.department)
+		.setProfession(this.profession)
+		.setResponsibility(this.tel)
+		.setStudentID(this.studentID)
+		.setTel(this.tel);
 	}
 }

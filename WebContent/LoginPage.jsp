@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<%@ include file="commonjsfile.html" %>
+<%@ include file="commonjsfile.html"%>
 <meta http-equiv="Content-Type" content="text/html; charset=GB18030">
 <link rel="stylesheet" type="text/css" href="css/Login.css">
 <script src="js/LoginPage.js"></script>
@@ -19,12 +19,15 @@
 	<c:if test="${not empty(invalidPWD) }">
 		<span class="LoginFailPrompt">学号或密码输入错误</span>
 	</c:if>
+	<c:if test="${param.status eq LoginManager.statusRegSuccessful }">
+		<span class="RegSuccessPrompt">请登录</span>
+	</c:if>
 
 	<h1>创新创业项目申报系统</h1>
-		<div id="mainMenu">
-			<a href="javascript:;" id="view">查看项目</a> <a href="javascript:;"
-				id="manage">申报(管理)项目</a>
-		</div>
+	<div id="mainMenu">
+		<a href="javascript:;" id="view">查看项目</a> <a href="javascript:;"
+			id="manage">申报(管理)项目</a>
+	</div>
 	<div id="forms">
 		<div class="formWrapper" id="formManage">
 			<form class="loginForm" action="Login" method="post">

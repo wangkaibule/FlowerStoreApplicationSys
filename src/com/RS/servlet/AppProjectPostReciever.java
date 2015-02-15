@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.RS.model.AppProjectContent;
 import com.RS.model.AppProjectContent.Content;
+import com.RS.model.TeamMemberInfo;
 
 /**
  * Servlet implementation class AppProjectPostReciever
@@ -61,16 +62,7 @@ public class AppProjectPostReciever extends HttpServlet {
 			int index = Integer.parseInt(request.getParameter("index"));
 			List<Content.MemberInfo> list = content.getMembersList();
 			if (list.size() - 1 < index) {
-				Content.MemberInfo.Builder builder = Content.MemberInfo
-				.newBuilder();
-				builder.setName("新成员")
-				.setDepartment("-")
-				.setProfession("-")
-				.setStudentID("-")
-				.setResponsibility("-")
-				.setTel("-");
-
-				content.addMembers(builder);
+				content.addMembers(new TeamMemberInfo().builder());
 			} else {
 				Content.MemberInfo.Builder builder = content.getMembersBuilder(index);
 				isSuccess = invoke(field, value, builder, response);

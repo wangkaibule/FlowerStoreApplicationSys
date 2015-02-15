@@ -125,14 +125,12 @@ public class ProjectItemLib {
 		return item;
 	}
 
-	public boolean saveProject(long projectUID) {
+	public ProjectInfo saveProject(long projectUID) {
 		ProjectInfo item = findProject(projectUID);
-		boolean isSuccess = true;
 
-		isSuccess &= DataBaseInterface.updatePart(item);
-		isSuccess &= removeFromList(item);
+		removeFromList(item);
 
-		return isSuccess;
+		return item;
 	}
 
 	public boolean deleteProject(long projectUID) {

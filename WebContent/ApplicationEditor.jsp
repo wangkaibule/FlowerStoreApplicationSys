@@ -2,6 +2,14 @@
 	pageEncoding="GB18030"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+
+
+
+<%-- DO NOT try to change format of this page if it is not necessary !!!--%>
+
+
+
+
 <jsp:setProperty property="*" name="Content" />
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -12,7 +20,7 @@
 <jsp:include page="commonjsfile.html"></jsp:include>
 <script type="text/javascript" src="js/ApplicationEditor.js"></script>
 <c:if test="${not empty Content.name }">
-	<title>${Content.name }</title>
+	<title><c:out value="${Content.name }" /></title>
 </c:if>
 <c:if test="${empty Content.name }">
 	<title>新建</title>
@@ -39,9 +47,10 @@
 					<tr class="ro2">
 						<td colspan="1" style="width: 0.8898in;" class="ce2"><p>项目名称</p></td>
 						<td colspan="5" style="width: 1.1118in;" class="ce8"><h2>
-								<a href="javascript:;" class="clickable" id="Title" name="name">${Content.name }</a>
+								<a href="javascript:;" class="clickable" id="Title" name="name"><c:out
+										value="${Content.name }" /></a>
 							</h2></td>
-							<td></td>
+						<td></td>
 					</tr>
 					<tr class="ro2">
 						<td colspan="2" style="width: 0.8898in;" class="ce2"><p>项目类别</p></td>
@@ -72,44 +81,57 @@
 							id="memberInfoTitle" data-nextIndex="2"><p>项目负责人及主要成员</p></td>
 						<td style="width: 1.1118in;" class="ce8"><a data-index="0"
 							name="name" class="blurthensub" href="javascript:;"
-							data-title="memberInfo">${Content.membersList[0].name }</a></td>
+							data-title="memberInfo"><c:out
+									value="${Content.membersList[0].name }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a data-index="0"
 							name="department" class="blurthensub" href="javascript:;"
-							data-title="memberInfo">${Content.membersList[0].department }</a></td>
+							data-title="memberInfo"><c:out
+									value="${Content.membersList[0].department }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a data-index="0"
 							name="profession" class="blurthensub" href="javascript:;"
-							data-title="memberInfo">${Content.membersList[0].profession }</a></td>
+							data-title="memberInfo"><c:out
+									value="${Content.membersList[0].profession }" /></a></td>
 						<td style="width: 1.1118in;" class="ce12"><a data-index="0"
 							name="studentID" class="blurthensub" href="javascript:;"
-							data-title="memberInfo">${Content.membersList[0].studentID }</a></td>
+							data-title="memberInfo"><c:out
+									value="${Content.membersList[0].studentID }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a data-index="0"
 							name="responsibility" class="blurthensub" href="javascript:;"
-							data-title="memberInfo">${Content.membersList[0].responsibility }</a></td>
+							data-title="memberInfo"><c:out
+									value="${Content.membersList[0].responsibility }" /></a></td>
 						<td style="width: 1.1118in;" class="ce12"><a data-index="0"
 							name="tel" class="blurthensub" href="javascript:;"
-							data-title="memberInfo">${Content.membersList[0].tel }</a></td>
+							data-title="memberInfo"><c:out
+									value="${Content.membersList[0].tel }" /></a></td>
 					</tr>
 					<c:forEach items="${Content.membersList }" begin="1" var="current"
 						varStatus="status">
 						<tr class="ro2 roMemberList">
 							<td style="width: 1.1118in;" class="ce8"><a
-								data-index="${status.index }" name="name" class="blurthensub"
-								href="javascript:;" data-title="memberInfo">${current.name }</a></td>
-							<td style="width: 1.1118in;" class="ce8"><a data-index="${status.index }"
-								name="department" class="blurthensub" href="javascript:;"
-								data-title="memberInfo">${current.department }</a></td>
-							<td style="width: 1.1118in;" class="ce8"><a data-index="${status.index }"
-								name="profession" class="blurthensub" href="javascript:;"
-								data-title="memberInfo">${current.profession }</a></td>
-							<td style="width: 1.1118in;" class="ce12"><a data-index="${status.index }"
-								name="studentID" class="blurthensub" href="javascript:;"
-								data-title="memberInfo">${current.studentID }</a></td>
-							<td style="width: 1.1118in;" class="ce8"><a data-index="${status.index }"
+								data-index="<c:out value="${status.index }"/>" name="name"
+								class="blurthensub" href="javascript:;" data-title="memberInfo"><c:out
+										value="${current.name }" /></a></td>
+							<td style="width: 1.1118in;" class="ce8"><a
+								data-index="<c:out value="${status.index }"/>" name="department"
+								class="blurthensub" href="javascript:;" data-title="memberInfo"><c:out
+										value="${current.department }" /></a></td>
+							<td style="width: 1.1118in;" class="ce8"><a
+								data-index="<c:out value="${status.index }"/>" name="profession"
+								class="blurthensub" href="javascript:;" data-title="memberInfo"><c:out
+										value="${current.profession }" /></a></td>
+							<td style="width: 1.1118in;" class="ce12"><a
+								data-index="<c:out value="${status.index }"/>" name="studentID"
+								class="blurthensub" href="javascript:;" data-title="memberInfo"><c:out
+										value="${current.studentID }" /></a></td>
+							<td style="width: 1.1118in;" class="ce8"><a
+								data-index="<c:out value="${status.index }"/>"
 								name="responsibility" class="blurthensub" href="javascript:;"
-								data-title="memberInfo">${current.responsibility }</a></td>
-							<td style="width: 1.1118in;" class="ce12"><a data-index="${status.index }"
-								name="tel" class="blurthensub" href="javascript:;"
-								data-title="memberInfo">${current.tel }</a></td>
+								data-title="memberInfo"><c:out
+										value="${current.responsibility }" /></a></td>
+							<td style="width: 1.1118in;" class="ce12"><a
+								data-index="<c:out value="${status.index }"/>" name="tel"
+								class="blurthensub" href="javascript:;" data-title="memberInfo"><c:out
+										value="${current.tel }" /></a></td>
 						</tr>
 					</c:forEach>
 					<tr class="ro2 roMemberList">
@@ -129,21 +151,27 @@
 						<td rowspan="1" style="width: 0.8898in;" class="ce2"><p
 								id="TutororTitle">指导教师</p></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
-							name="name" data-index="0" href="javascript:;" data-title="teacher">${Content.teacher.name }</a></td>
+							name="name" data-index="0" href="javascript:;" data-title="teacher"><c:out
+									value="${Content.teacher.name }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="department" data-index="0" href="javascript:;"
-							data-title="teacher">${Content.teacher.department }</a></td>
+							data-title="teacher"><c:out
+									value="${Content.teacher.department }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="profession" data-index="0" href="javascript:;"
-							data-title="teacher">${Content.teacher.profession }</a></td>
+							data-title="teacher"><c:out
+									value="${Content.teacher.profession }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="professionalTitle" data-index="0" href="javascript:;"
-							data-title="teacher">${Content.teacher.professionalTitle }</a></td>
+							data-title="teacher"><c:out
+									value="${Content.teacher.professionalTitle }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="responsibility" data-index="0" href="javascript:;"
-							data-title="teacher">${Content.teacher.responsibility }</a></td>
+							data-title="teacher"><c:out
+									value="${Content.teacher.responsibility }" /></a></td>
 						<td style="width: 1.1118in;" class="ce12"><a class="blurthensub"
-							name="tel" data-index="0" href="javascript:;" data-title="teacher">${Content.teacher.tel }</a></td>
+							name="tel" data-index="0" href="javascript:;" data-title="teacher"><c:out
+									value="${Content.teacher.tel }" /></a></td>
 					</tr>
 					<tr class="ro2">
 						<td style="width: 1.1118in;" class="ce8">&nbsp;</td>
@@ -157,21 +185,27 @@
 					<tr class="ro2">
 						<td rowspan="1" style="width: 0.8898in;" class="ce2"><p>创业实践项目企业导师</p></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
-							name="name" data-index="0" href="javascript:;" data-title="tutor">${Content.companyTutor.name }</a></td>
+							name="name" data-index="0" href="javascript:;" data-title="tutor"><c:out
+									value="${Content.companyTutor.name }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="department" data-index="0" href="javascript:;"
-							data-title="tutor">${Content.companyTutor.department }</a></td>
+							data-title="tutor"><c:out
+									value="${Content.companyTutor.department }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="profession" data-index="0" href="javascript:;"
-							data-title="tutor">${Content.companyTutor.profession }</a></td>
+							data-title="tutor"><c:out
+									value="${Content.companyTutor.profession }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="professionalTitle" data-index="0" href="javascript:;"
-							data-title="tutor">${Content.companyTutor.professionalTitle }</a></td>
+							data-title="tutor"><c:out
+									value="${Content.companyTutor.professionalTitle }" /></a></td>
 						<td style="width: 1.1118in;" class="ce8"><a class="blurthensub"
 							name="responsibility" data-index="0" href="javascript:;"
-							data-title="tutor">${Content.companyTutor.responsibility }</a></td>
+							data-title="tutor"><c:out
+									value="${Content.companyTutor.responsibility }" /></a></td>
 						<td style="width: 1.1118in;" class="ce12"><a class="blurthensub"
-							name="tel" data-index="0" href="javascript:;" data-title="tutor">${Content.companyTutor.tel }</a></td>
+							name="tel" data-index="0" href="javascript:;" data-title="tutor"><c:out
+									value="${Content.companyTutor.tel }" /></a></td>
 					</tr>
 					<tr class="ro3">
 						<td colspan="3" style="width: 0.8898in;" class="ce2"><p>项目执行时间（起止时间）</p></td>
@@ -189,14 +223,14 @@
 								选题背景和意义<span class="T1">（应着重说明学生对该项目的自主兴趣所在和原先在该项目上所积累的实践基础和知识基础）</span>
 							</p></td>
 						<td colspan="6" style="width: 1.1118in;" class="editable"
-							name="backgroundDescription"><p>${Content.backgroundDescription }</p></td>
+							name="backgroundDescription"><p><c:out value="${Content.backgroundDescription }" /></p></td>
 					</tr>
 					<tr class="ro5">
 						<td style="width: 0.8898in;" class="ce2"><p>
 								项目简介<span class="T1">（包括项目内容、主要技术方案和路线、已有工作基础）</span>
 							</p></td>
 						<td colspan="6" style="width: 1.1118in;" name="projectDescription"
-							class="editable"><p>${Content.projectDescription }</p></td>
+							class="editable"><p><c:out value="${Content.projectDescription }" /></p></td>
 					</tr>
 					<tr class="ro6">
 						<td style="width: 0.8898in;" class="ce3"><p>预期成果</p>
@@ -204,12 +238,12 @@
 								<span class="T1">（实验报告、论文、设计、专利、产品、服务等）</span>
 							</p></td>
 						<td name="goalExpectation" colspan="6" style="width: 1.1118in;"
-							class="editable"><p>${Content.goalExpectation }</p></td>
+							class="editable"><p><c:out value="${Content.goalExpectation }" /></p></td>
 					</tr>
 					<tr class="ro7">
 						<td style="width: 0.8898in;" class="ce2"><p id="sp1">主要创新点与特色</p></td>
 						<td name="projectFeatures" colspan="6" style="width: 1.1118in;"
-							class="editable"><p>${Content.projectFeatures }</p></td>
+							class="editable"><p><c:out value="${Content.projectFeatures }" /></p></td>
 					</tr>
 					<tr class="ro8">
 						<td style="width: 0.8898in;" class="ce2"><p>配套条件要求</p>
@@ -217,7 +251,7 @@
 								<span class="T1">（包括设备、场地、材料、实验课时及指导教师要求）</span>
 							</p></td>
 						<td colspan="6" name="equipmentNeeds" style="width: 1.1118in;"
-							class="editable"><p>${Content.equipmentNeeds }</p></td>
+							class="editable"><p><c:out value="${Content.equipmentNeeds }" /></p></td>
 					</tr>
 					<tr class="ro9">
 						<td style="width: 0.8898in;" class="ce2"><p>经费预算</p>
@@ -225,13 +259,15 @@
 								<span class="T1">（包括设备、材料、制作及软件等费用）</span>
 							</p></td>
 						<td name="financialNeed" colspan="6" style="width: 1.1118in;"
-							class="editable"><p>${Content.financialNeed }</p></td>
+							class="editable"><p><c:out value="${Content.financialNeed }" /></p></td>
 					</tr>
 				</tbody>
 			</table>
 		</form>
 		<input type="text" class="wrapInput" id="protoInput"
-			style="display: none"><textarea class="wrapText" id="protoTextarea" style="display:none"></textarea> <a href="javascript:;" id="submitButton">保存</a>
+			style="display: none">
+		<textarea class="wrapText" id="protoTextarea" style="display: none"></textarea>
+		<a href="javascript:;" id="submitButton">保存</a>
 	</div>
 </body>
 </html>

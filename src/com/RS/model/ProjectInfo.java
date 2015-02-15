@@ -8,6 +8,7 @@ public abstract class ProjectInfo implements AccessLeveled {
 	public static final int projectTypeSummary = 1;
 	protected boolean modified = false;
 	protected ProjectInfo pItem;
+	private int inHandleCount = 0;
 
 	public long getProjectUID() {
 		return projectUID;
@@ -17,13 +18,28 @@ public abstract class ProjectInfo implements AccessLeveled {
 		projectUID = id;
 	}
 
-	public abstract int getProjectType();
+	public void updateModification() {
+		boolean temp = false;
+		synchronized (this) {
+			inHandleCount--;
+			if (inHandleCount <= 0) {
+				temp = true;
+				ProjectItemLib lib = ProjectItemLib.getProjectLib();
+				lib.saveProject(projectUID);
+			}
+			if (temp == true && modified) {
+				storeContent();
+			}
+		}
+	}
 
-	public abstract String getProjectTitle();
+	protected abstract void storeContent();
+
+	public abstract int getProjectType();
 
 	public abstract Object getContent();
 
-	public abstract String getAuthor();
+	public abstract String getAuthorName();
 
 	public abstract void fillAuthorInfo(TeamMemberInfo info);
 
@@ -32,6 +48,8 @@ public abstract class ProjectInfo implements AccessLeveled {
 
 		return new AccessLevel(pItem);
 	}
+
+	public abstract String getProjectTitle();
 
 	@Override
 	public ProjectInfo getProjectItem() {
