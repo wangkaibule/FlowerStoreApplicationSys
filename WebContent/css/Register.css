@@ -1,0 +1,51 @@
+@CHARSET "UTF-8";
+
+h1 {
+	margin-left: auto;
+	margin-right: auto;
+	width: 400px;
+	text-align: center;
+	font-size: -webkit-xxx-large;
+}
+
+.formWrapper {
+	display: block;
+	margin-top: 60px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 495px;
+}
+
+.loginForm {
+	display: block;
+}
+
+.loginForm * input {
+	height: 40px;
+}
+
+input {
+	width: 320px;
+	font-size: xx-large;
+}
+
+input[type="submit"] {
+	width: 345px;
+	height: 50px;
+}
+
+input[type="password"] {
+	padding: 10px;
+}
+
+input[type="text"] {
+	padding: 10px;
+}
+
+td {
+	height: 70px;
+}
+
+table * label {
+	font-size: x-large;
+}
