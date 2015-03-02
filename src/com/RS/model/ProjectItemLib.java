@@ -1,17 +1,33 @@
 package com.RS.model;
 
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.BitSet;
+import java.util.Hashtable;
+import java.util.List;
+
+import org.apache.catalina.realm.NullRealm;
+
+import sun.security.krb5.internal.crypto.NullEType;
+
+import com.RS.model.level.Modifiable;
+import com.RS.model.level.Printable;
+import com.RS.model.level.Removable;
+import com.RS.model.level.Viewable;
+import com.sun.accessibility.internal.resources.accessibility;
 
 //TODO ALL ProjectItem operates should use this class.
 
 /*
- * Project will be saved in database as many parts.
- * the first parts (no. 0 part) should be the title of projects and the list of team members
+ * the first item (index 0) in theContent.members is the author information.
  * */
-public class ProjectItemLib {
-	private static ProjectItemLib	singleton	= null;
-	private ArrayList<ProjectInfo>	projectList	= new ArrayList<ProjectInfo>();
+class ProjectItemLib {
+	private static ProjectItemLib singleton = null;
+	private Hashtable<Long, ProjectInfo> projectList = new Hashtable<Long, ProjectInfo>();
 
 	private ProjectItemLib() {
 
@@ -19,7 +35,7 @@ public class ProjectItemLib {
 
 	// TODO ProjectLib should be created by application when application is
 	// started.
-	public static ProjectItemLib getProjectLib() {
+	protected static ProjectItemLib getProjectLib() {
 		if (singleton == null) {
 			singleton = new ProjectItemLib();
 			return singleton;
@@ -28,96 +44,51 @@ public class ProjectItemLib {
 		}
 	}
 
-	private boolean removeFromList(ProjectInfo item) {
-		return projectList.remove(item);
+	protected ProjectInfo removeFromList(long projectUID) {
+		return projectList.remove(projectUID);
 
-	}
-
-	public void removeFromList(int index) {
-		if (index > -1) {
-			projectList.remove(index);
-		} else {
-			return;
-		}
-	}
-
-	private ProjectInfo findProject(long projectUID) {
-		Iterator<ProjectInfo> i = projectList.iterator();
-		ProjectInfo item = null;
-
-		while (i.hasNext()) {
-			item = i.next();
-			if (item.getProjectUID() == projectUID) {
-				break;
-			}
-		}
-
-		return item;
-	}
-
-	private int findProjectIndex(long projectUID) {
-		Iterator<ProjectInfo> items = projectList.iterator();
-		int index = 0;
-
-		while (true) {
-			if (!items.hasNext()) {
-				return -1;
-			} else {
-				if (items.next().getProjectUID() == projectUID) {
-					return index;
-				} else {
-					index++;
-				}
-			}
-		}
 	}
 
 	private void addToList(ProjectInfo item) {
-		projectList.add(item);
+		projectList.put(item.projectUID, item);
 	}
 
-	// TODO functions below are not completed .
-	public boolean update(long projectUID, int part) {
-
-		return DataBaseInterface.updatePart(findProject(projectUID), part);
-	}
-
-	public ProjectInfo getProject(long projectUID) {
-		ProjectInfo item = findProject(projectUID);
-
-		if (item == null) {
-			item = DataBaseInterface.getProjectItem(projectUID);
-
-			if (item == null) {
-				return null;
-			} else {
-				addToList(item);
-			}
-		}
-
-		return item;
-	}
-
-	public void getUserProjects(String UsrName, String pwd,
+	protected void getUserProjects(String UsrID, boolean isLogged,
 	ArrayList<AccessLeveled> list) {
-		String sql = "select ....";
+		DB db = new DB();
+		ResultSet set = null;
 		// TODO add project to lib list
 		// TODO fetch the projectUID(s) and corresponding access level from
 		// database ,if(-1) then return,else
 		// check if project exists else fetch project item from database
 		// TODO check user access level for every project Item.
-		if (pwd == null) {
-			Tester.fillProjectListAccessLeveled(list, UsrName);
-		} else {
-			Tester.fillProjectListAccessLeveled(list, UsrName, pwd);
+		// TODO add the semaphore
+		set = db.getUserProjectUID(UsrID);
+
+		try {
+			while (set.next()) {
+				long id = set.getLong(1);
+				ProjectInfo project = projectList.get(id);
+				if (project == null) {
+					project = db.loadProject(id);
+					projectList.put(project.projectUID, project);
+				}
+				project.inHandleCount++;
+				list.add(db.wrapAccessLevel(project, UsrID, isLogged));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(NullPointerException e){
+			return;
 		}
 	}
 
-	public ProjectInfo createProject(int projectType) {
+	protected ProjectInfo createProject(int projectType,String userID) {
 		ProjectInfo item = null;
 
-		item = TheFactory.getProjectFactory(projectType).create();
-		
+		item = TheFactory.getProjectFactory(projectType).create(userID);
+
 		if (item != null) {
 			addToList(item);
 		}
@@ -125,21 +96,129 @@ public class ProjectItemLib {
 		return item;
 	}
 
-	public ProjectInfo saveProject(long projectUID) {
-		ProjectInfo item = findProject(projectUID);
-
-		removeFromList(item);
-
-		return item;
-	}
-
-	public boolean deleteProject(long projectUID) {
-		int index = findProjectIndex(projectUID);
-		boolean isSuccess = true;
-
-		isSuccess &= DataBaseInterface.deleteProjectItem(projectUID);
-		removeFromList(index);
+	protected boolean deleteProject(long projectUID) {
+		boolean isSuccess = false;
+		isSuccess = projectList.remove(projectUID).deleteProject();
 
 		return isSuccess;
+	}
+	
+	protected void onUserExit(long projectUID){
+		ProjectInfo project = projectList.get(projectUID);
+		synchronized (project) {
+			project.inHandleCount--;
+			if(project.inHandleCount<=0){
+				projectList.remove(projectUID);
+			}
+		}
+	}
+
+	private static class DB extends DBConnection {
+		AccessLeveled wrapAccessLevel(ProjectInfo project, String userID,
+		boolean isLogged) {
+			final String accessLevel = "isAuthor,modifiable,deletable";
+			final String sql = "call testAccessLevelSet(?,?,?,?)";
+			byte[] levelSet = null;
+			ResultSet result = null;
+
+			try {
+				CallableStatement statement = getPool().getConnection()
+				.prepareCall(sql);
+				statement.setBoolean(1, isLogged);
+				statement.setString(2, userID);
+				statement.setLong(3, project.projectUID);
+				statement.setString(4, accessLevel);
+				statement.execute();
+				
+				result = statement.getResultSet();
+				if(result.first()){
+					levelSet = StrtBytes(result.getString(1));     
+				}else{
+					return null;
+				}
+				
+				return wrapLevel(levelSet, project,
+				AccessLeveled.posModifiable, AccessLeveled.posRemovable);
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		private byte[] StrtBytes(String str) {
+			byte[] result = new byte[str.length()];
+			for(int i=0;i<result.length;i++){
+				result[i]=Byte.parseByte(str.substring(0, 1));
+				str = str.substring(1);
+			}
+			return result;
+		}
+
+		private AccessLeveled wrapLevel(byte[] levelSet, ProjectInfo project,
+		int... levels) {
+			AccessLeveled result = project;
+			for (int i =0;i<levelSet.length;i++) {
+				if(levelSet[i]==0){
+					continue;
+				}
+				switch (levels[i]) {
+				case AccessLeveled.posModifiable:
+					result = new Modifiable(result);
+					break;
+				case AccessLeveled.posPrintable:
+					result = new Printable(result);
+					break;
+				case AccessLeveled.posRemovable:
+					result = new Removable(result);
+					break;
+				case AccessLeveled.posViewable:
+					result = new Viewable(result);
+					break;
+				}
+			}
+			return result;
+		}
+
+		private ResultSet getUserProjectUID(String usrID) {
+			final String sql = "select project from projectMemberRelation where member=?";
+
+			try {
+				PreparedStatement statement = getPool().getConnection()
+				.prepareStatement(sql);
+				statement.setString(1, usrID);
+				statement.execute();
+				return statement.getResultSet();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		private ProjectInfo loadProject(long id) {
+			int projectType;
+			final String sql = "select projectCategory from projectInfo where projectUID=? limit 1";
+			PreparedStatement statement = null;
+			ResultSet result = null;
+
+			try {
+			statement = getPool().getConnection().prepareStatement(sql);
+			statement.setLong(1, id);
+			statement.execute();
+			result = statement.getResultSet();
+				if (result.first()) {
+					projectType = result.getInt(1);
+					return TheFactory.getProjectFactory(projectType).create(id);
+				}else{
+					return null;
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
 	}
 }

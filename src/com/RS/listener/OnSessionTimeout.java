@@ -1,9 +1,8 @@
 package com.RS.listener;
 
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
 
 import com.RS.model.CurrentUserInformation;
 
@@ -12,7 +11,7 @@ import com.RS.model.CurrentUserInformation;
  *
  */
 @WebListener
-public class OnSessionTimeout implements HttpSessionListener {
+public class OnSessionTimeout implements HttpSessionAttributeListener {
 
     /**
      * Default constructor. 
@@ -22,20 +21,28 @@ public class OnSessionTimeout implements HttpSessionListener {
     }
 
 	/**
-     * @see HttpSessionListener#sessionCreated(HttpSessionEvent)
+     * @see HttpSessionAttributeListener#attributeAdded(HttpSessionBindingEvent)
      */
-    public void sessionCreated(HttpSessionEvent arg0)  { 
+    public void attributeAdded(HttpSessionBindingEvent arg0)  { 
          // TODO Auto-generated method stub
     }
 
 	/**
-     * @see HttpSessionListener#sessionDestroyed(HttpSessionEvent)
+     * @see HttpSessionAttributeListener#attributeRemoved(HttpSessionBindingEvent)
      */
-    public void sessionDestroyed(HttpSessionEvent event)  { 
-    	HttpSession session = (HttpSession) event.getSession();
+    public void attributeRemoved(HttpSessionBindingEvent event)  { 
+    	Object o = event.getValue();
+    	if (o instanceof CurrentUserInformation) {
+    		((CurrentUserInformation)o).onDestroy();
+		}
     	
-    	CurrentUserInformation info = (CurrentUserInformation) session.getAttribute("UserInformation");
-    	
+    }
+
+	/**
+     * @see HttpSessionAttributeListener#attributeReplaced(HttpSessionBindingEvent)
+     */
+    public void attributeReplaced(HttpSessionBindingEvent arg0)  { 
+         // TODO Auto-generated method stub
     }
 	
 }

@@ -84,7 +84,9 @@ function addableClickEventHandler(e) {
 	var addParent = add.parent().parent();
 	var theInitiator = add.attr("name");
 	var counter = $("#" + theInitiator + "Title");
-	var Index = counter.attr("data-nextIndex");
+	var group = add.attr("group");
+	var tmp = "[group="+group+"][counter="+group+"]";
+	var Index = $(tmp).length;
 	var row = counter.attr("rowspan");
 	var fetcher = function(data) {
 
@@ -107,7 +109,6 @@ function addableClickEventHandler(e) {
 		dataType : "html"
 	})
 
-	counter.attr("data-nextIndex", parseInt(Index) + 1);
 	console.log(Index);
 
 	$.ajax({
@@ -115,7 +116,7 @@ function addableClickEventHandler(e) {
 		type : "POST",
 		data : {
 			title : add.attr("name") + "Update",
-			index : counter.attr("data-nextIndex"),
+			index : Index,
 		}
 	})
 
@@ -145,11 +146,12 @@ function editableInputClickEventHandler(event) {
 	var theInput = $($("#protoTextarea")[0].cloneNode());
 	var theElementName = e.attr("name");
 
-	if (e.is("td")) {
+	if (e.is("td")&&!e.attr("pending")) {
 		theInput.removeAttr("id").removeAttr("style").attr("name",
 				theElementName).addClass(e.attr("class"));
 		theInput.val(e.children("p").hide().text());
 		e.append(theInput);
+		e.attr("pending","true");
 		theInput.focus();
 	}
 }

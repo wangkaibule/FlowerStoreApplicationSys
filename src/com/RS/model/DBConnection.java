@@ -20,10 +20,10 @@ public abstract class DBConnection {
 
 			try {
 				property.setUrl(p.getProperty("url"));
-				property.setUrl("jdbc:mysql://85.10.205.173:3306/wangkaibuletest");
+				property.setUrl("jdbc:mysql://localhost/wangkaibuletest");
 				property.setDriverClassName("com.mysql.jdbc.Driver");
-				property.setUsername("wangkaibule");
-				property.setPassword("wangkai713");
+				property.setUsername("root");
+				property.setPassword("wangkaibule");
 				property.setJmxEnabled(true);
 				property.setTestWhileIdle(false);
 				property.setTestOnBorrow(true);

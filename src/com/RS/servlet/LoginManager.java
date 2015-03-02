@@ -94,7 +94,7 @@ public class LoginManager extends HttpServlet {
 
 			if (formPassword != null && formUserName != null
 			&& db.isValidUser(formUserName, formPassword)) {
-				UsrInfo = new CurrentUserInformation(formUserName, formPassword);
+				UsrInfo = new CurrentUserInformation(formUserName, true);
 			} else {
 				request.setAttribute("invalidPWD", true);
 				request.getRequestDispatcher("LoginPage.jsp").forward(request,
@@ -110,7 +110,7 @@ public class LoginManager extends HttpServlet {
 			&& db
 			.isUserNameExist(formUserRealName, formUserName)) {
 
-				UsrInfo = new CurrentUserInformation(formUserName);
+				UsrInfo = new CurrentUserInformation(formUserName,false);
 			} else {
 				request.setAttribute("invalidID", true);
 				request.getRequestDispatcher("LoginPage.jsp").forward(request,
@@ -158,7 +158,7 @@ public class LoginManager extends HttpServlet {
 		}
 
 		private boolean isUserNameExist(String realName, String userID) {
-			final String sql = "select count(*) where memberRealName=? and memberID = ? limit 1";
+			final String sql = "select count(*) from memberInfo where memberRealName=? and memberID = ? limit 1";
 			ResultSet result = null;
 
 			try {

@@ -18,7 +18,6 @@ import javax.servlet.http.HttpSession;
 import com.RS.model.AccessLeveled;
 import com.RS.model.ApplicationProject;
 import com.RS.model.ProjectInfo;
-import com.RS.model.ProjectItemLib;
 
 /**
  * Servlet implementation class ProjectContentManager
@@ -27,6 +26,8 @@ import com.RS.model.ProjectItemLib;
 public class ProjectContentManager extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	protected static final String pendingProject="theProject";
+	private static final int RQ_EDITRETURN = 1;
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -50,7 +51,7 @@ public class ProjectContentManager extends HttpServlet {
 		.getAttribute("PendingProject");
 
 		if (leveledProject == null || !leveledProject.getLevel().isModifiable()) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
 
@@ -66,6 +67,8 @@ public class ProjectContentManager extends HttpServlet {
 			switch (projectType) {
 			case ProjectInfo.projectTypeApplication:
 				session.setAttribute("Content", project.getContent());
+				session.setAttribute(pendingProject, project);
+				project.setModified();
 				response.sendRedirect(response.encodeRedirectURL("ApplicationEditor.jsp"));
 				break;
 			case ProjectInfo.projectTypeSummary:
@@ -86,7 +89,15 @@ public class ProjectContentManager extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 	HttpServletResponse response) throws ServletException, IOException {
-		response.sendError(HttpServletResponse.SC_NO_CONTENT);
+		String update = request.getParameter("update");
+		
+		if (update==null) {
+			response.sendError(HttpServletResponse.SC_NO_CONTENT);
+			return;
+		}
+		HttpSession session = request.getSession(false);
+		ProjectInfo project = (ProjectInfo)session.getAttribute(pendingProject);
+		project.updateProject();
 		return;
 	}
 	

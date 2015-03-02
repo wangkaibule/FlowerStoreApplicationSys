@@ -1,7 +1,14 @@
 package com.RS.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.RS.model.AppProjectContent.Content;
@@ -13,15 +20,27 @@ public class ApplicationProject extends ProjectInfo {
 	private static final int categoryBussinessTrain = 1;
 	private static final int categoryBussinessPractice = 2;
 
-	private static final String sqlLoadEntity = "select ....";
-
 	private Content.Builder theContent = null;
-	private boolean memberDeleted = false;
+	private boolean memberModified = false;
 	private List<Integer> deletedMemberIndex = null;
 
-	public ApplicationProject() {
+	public ApplicationProject(long projectUID, boolean isNew) {
 		pItem = this;
-		theContent = Content.newBuilder();
+		this.projectUID = projectUID;
+
+		if (!isNew) {
+			DB db = new DB();
+			try {
+				theContent = Content.parseFrom(db.loadContent(projectUID))
+				.toBuilder();
+			} catch (IOException e) {
+				theContent = Content.newBuilder();
+				e.printStackTrace();
+			}
+		} else {
+			theContent = Content.newBuilder();
+			theContent.setName("新项目");
+		}
 	}
 
 	public static int getCategorycreationtrain() {
@@ -37,8 +56,11 @@ public class ApplicationProject extends ProjectInfo {
 	}
 
 	public static int getCategoryUndefined() {
-		// TODO Auto-generated method stub
 		return categoryUndefined;
+	}
+
+	public void setMemberModified() {
+		memberModified = true;
 	}
 
 	@Override
@@ -54,7 +76,6 @@ public class ApplicationProject extends ProjectInfo {
 
 	@Override
 	public String getAuthorName() {
-		// TODO Auto-generated method stub
 		return theContent.getMembers(0).getName();
 	}
 
@@ -65,29 +86,41 @@ public class ApplicationProject extends ProjectInfo {
 
 	@Override
 	public Content.Builder getContent() {
-		// TODO Auto-generated method stub
+
 		return theContent;
 	}
 
 	@Override
 	protected void storeContent() {
-		if(!modified){
+
+		if (!modified) {
 			return;
-		}else{
-			if(memberDeleted){
-				//TODO TO BE CONTINUED tomorrow...
+		} else {
+			DB db = new DB();
+			if (memberModified) {
+				db.modifyMemberRelationship(theContent.getMembersList(),
+				projectUID);
 			}
+			db.writeContent(theContent, projectUID, theContent.getMembers(0)
+			.getStudentID());
 		}
 	}
 
 	public void deleteTeamMember(int index) {
 		if (deletedMemberIndex == null) {
 			modified = true;
-			memberDeleted = true;
+			memberModified = true;
 			deletedMemberIndex = new ArrayList<Integer>();
 		}
 
 		deletedMemberIndex.add(index);
+	}
+	
+	public void commitMemberChange(){
+		List<Content.MemberInfo> deletedList = recreateMemberBuilder();
+		DB db = new DB();
+		
+		db.deleteMemberRelationship(deletedList, projectUID);
 	}
 
 	private List<Content.MemberInfo> recreateMemberBuilder() {
@@ -99,8 +132,8 @@ public class ApplicationProject extends ProjectInfo {
 		theContent.clearMembers();
 
 		int j = 0;
-		for (int i = 0; i < origListSize ; i++) {
-			if ( j <= deletedListSize && deletedMemberIndex.get(j) == i) {
+		for (int i = 0; i < origListSize; i++) {
+			if (j <= deletedListSize && deletedMemberIndex.get(j) == i) {
 				deleteList.add(origList.get(i));
 				j++;
 				continue;
@@ -109,5 +142,114 @@ public class ApplicationProject extends ProjectInfo {
 			}
 		}
 		return deleteList;
+	}
+
+	@Override
+	protected boolean onDeleteProject() {
+		DB db = new DB();
+
+		return db.deleteItem(projectUID);
+	}
+
+	private static class DB extends DBConnection {
+
+		void modifyMemberRelationship(List<Content.MemberInfo> list,
+		long projectUID) {
+			final String sql1 = "delete from projectMemberRelation where project=?";
+			final String sql = "call addMemberRelationship(?,?)";
+			try {
+				CallableStatement statement = getPool().getConnection()
+				.prepareCall(sql1);
+				
+				statement.setLong(1, projectUID);
+				statement.addBatch(sql);
+
+				for (Content.MemberInfo info : list) {
+					statement.setString(1, info.getStudentID());
+					statement.setLong(2, projectUID);
+					statement.addBatch();
+				}
+
+				statement.executeBatch();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		void deleteMemberRelationship(List<Content.MemberInfo> list,
+		long projectUID) {
+			final String sql = "call deleteMemberRelationship(?,?)";
+
+			try {
+				CallableStatement statement = getPool().getConnection()
+				.prepareCall(sql);
+
+				for (Content.MemberInfo info : list) {
+					statement.setString(1, info.getStudentID());
+					statement.setLong(2, projectUID);
+					statement.addBatch();
+				}
+
+				statement.executeBatch();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		void writeContent(Content.Builder content, long projectUID,
+		String userID) {
+			final String sql = "replace into projectData (authorID,projectUID,projectDatacol) value(?,?,?)";
+
+			try {
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				content.build().writeTo(stream);
+				PreparedStatement statement = getPool().getConnection()
+				.prepareStatement(sql);
+
+				statement.setString(1, userID);
+				statement.setLong(2, projectUID);
+				statement.setBlob(3,
+				new ByteArrayInputStream(stream.toByteArray()));
+
+				statement.execute();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		InputStream loadContent(long projectUID) {
+			final String sql = "select projectDatacol from projectData where projectUID=? limit 1";
+			ResultSet result = null;
+
+			try {
+				PreparedStatement statement = getPool().getConnection()
+				.prepareStatement(sql);
+				statement.setLong(1, projectUID);
+				statement.execute();
+				result = statement.getResultSet();
+				if (result.first()) {
+					return result.getBlob(1).getBinaryStream();
+				} else {
+					return null;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		boolean deleteItem(long projectUID) {
+			final String sql = "delete from projectInfo where projectUID=?";
+			try {
+				PreparedStatement statement = getPool().getConnection()
+				.prepareStatement(sql);
+				statement.setLong(1, projectUID);
+				return statement.executeUpdate()>0;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
 	}
 }

@@ -4,5 +4,6 @@ import com.RS.model.ProjectInfo;
 
 public interface ProjectFactory {
 
-	public ProjectInfo create();
+	ProjectInfo create(String userID);
+	ProjectInfo create(long projectUID);
 }

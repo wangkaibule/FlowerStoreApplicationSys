@@ -1,35 +1,36 @@
 package com.RS.model;
 
-import java.util.ArrayList;
-
 public abstract class ProjectInfo implements AccessLeveled {
 	protected long projectUID = -1L;
 	public static final int projectTypeApplication = 0;
 	public static final int projectTypeSummary = 1;
 	protected boolean modified = false;
 	protected ProjectInfo pItem;
-	private int inHandleCount = 0;
+	protected int inHandleCount = 0;
+	private boolean isDeleted = false;
 
 	public long getProjectUID() {
 		return projectUID;
 	}
 
-	public void setProjectUID(long id) {
-		projectUID = id;
+	public boolean deleteProject(){
+		isDeleted = true;
+		return onDeleteProject();
 	}
+	
+	protected void updateOnUsrExit() {
+		ProjectItemLib lib = ProjectItemLib.getProjectLib();
+		lib.onUserExit(projectUID);
 
-	public void updateModification() {
-		boolean temp = false;
-		synchronized (this) {
-			inHandleCount--;
-			if (inHandleCount <= 0) {
-				temp = true;
-				ProjectItemLib lib = ProjectItemLib.getProjectLib();
-				lib.saveProject(projectUID);
-			}
-			if (temp == true && modified) {
-				storeContent();
-			}
+		if (modified&&!isDeleted) {
+			storeContent();
+		}
+	}
+	
+	public void updateProject(){
+		if(modified&&!isDeleted){
+			storeContent();
+			modified = false;
 		}
 	}
 
@@ -41,15 +42,17 @@ public abstract class ProjectInfo implements AccessLeveled {
 
 	public abstract String getAuthorName();
 
-	public abstract void fillAuthorInfo(TeamMemberInfo info);
+	protected abstract void fillAuthorInfo(TeamMemberInfo info);
+
+	protected abstract boolean onDeleteProject();
+
+	public abstract String getProjectTitle();
 
 	@Override
 	public AccessLevel getLevel() {
 
 		return new AccessLevel(pItem);
 	}
-
-	public abstract String getProjectTitle();
 
 	@Override
 	public ProjectInfo getProjectItem() {
@@ -64,11 +67,8 @@ public abstract class ProjectInfo implements AccessLeveled {
 		return projectTypeSummary;
 	}
 
-	public boolean isModified() {
-		return modified;
-	}
-
-	public void setModified(boolean b) {
+	public void setModified() {
 		this.modified = true;
 	}
+
 }

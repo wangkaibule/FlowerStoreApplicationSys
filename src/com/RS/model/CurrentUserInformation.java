@@ -1,5 +1,8 @@
 package com.RS.model;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -10,39 +13,30 @@ public class CurrentUserInformation {
 
 	// TODO MANAGER wants to loose the limitation about the number of projects
 	// of a user.
-	private String						userId;
-	private String						userName;
-	private boolean						inProgress;
-	private boolean 					loggedin;
-	private ArrayList<AccessLeveled>	projects;
+	private String userId;
+	private String userName;
+	private boolean inProgress;
+	private boolean loggedin;
+	private ArrayList<AccessLeveled> projects;
 
-	public CurrentUserInformation(String userId, String password) {
+	public CurrentUserInformation(String userId, boolean loggedin) {
 		projects = new ArrayList<AccessLeveled>();
-		new DataBaseInterface();
+		DB db = new DB();
 
 		this.userId = userId;
-		this.userName = DataBaseInterface.getUserName(userId);
-		this.inProgress = DataBaseInterface.getUserProgressStatus(userId);
-		loggedin = true;
+		this.userName = db.getUserName(userId);
+		this.inProgress = db.getUserProgressStatus(userId);
+		this.loggedin = loggedin;
 		ProjectItemLib lib = ProjectItemLib.getProjectLib();
-		lib.getUserProjects(userId,password,projects);
+		lib.getUserProjects(userId, loggedin, projects);
 	}
-
-	public CurrentUserInformation(String userId) {
-
-		projects = new ArrayList<AccessLeveled>();
-		this.userId = userId;
-		this.userName = DataBaseInterface.getUserName(userId);
-		loggedin = false;
-		ProjectItemLib lib = ProjectItemLib.getProjectLib();
-		lib.getUserProjects(userId, null, projects);
-	}
+	
 
 	public boolean deleteProjectItem(long projectUID) {
-		Iterator<AccessLeveled> tempProjects= projects.iterator();
+		Iterator<AccessLeveled> tempProjects = projects.iterator();
 		boolean isSuccess = false;
 
-		for (int i = 0;  tempProjects.hasNext(); i++) {
+		for (int i = 0; tempProjects.hasNext(); i++) {
 			AccessLeveled project = tempProjects.next();
 
 			if (project.getProjectUID() == projectUID) {
@@ -59,10 +53,10 @@ public class CurrentUserInformation {
 	}
 
 	public AccessLeveled addProjectItem(int projectType) {
-		AccessLeveled newItem = null; 
+		AccessLeveled newItem = null;
 
 		ProjectItemLib lib = ProjectItemLib.getProjectLib();
-		ProjectInfo project = lib.createProject(projectType);
+		ProjectInfo project = lib.createProject(projectType,userId);
 
 		project.fillAuthorInfo(new TeamMemberInfo(userId));
 		newItem = new Modifiable(project);
@@ -93,13 +87,11 @@ public class CurrentUserInformation {
 	}
 
 	public AccessLeveled getProjectItem(long ProjectUID) {
-		Iterator<AccessLeveled> projectArray = projects.iterator();
-		AccessLeveled tempProject =null;
 
-		for (int i = 0; projectArray.hasNext(); i++) {
-			tempProject = projectArray.next();
-			if (tempProject.getProjectUID() == ProjectUID) {
-				return tempProject;
+		for (AccessLeveled project : projects) {
+
+			if (project.getProjectUID() == ProjectUID) {
+				return project;
 			}
 		}
 		return null;
@@ -108,10 +100,58 @@ public class CurrentUserInformation {
 	public boolean isInProgress() {
 		return inProgress;
 	}
-	
-	public void onDestroy(){
-		for(AccessLeveled project:projects){
-			project.getProjectItem().updateModification();
+
+	public void onDestroy() {
+		for (AccessLeveled project : projects) {
+			project.getProjectItem().updateOnUsrExit();
 		}
+	}
+
+	private static class DB extends DBConnection {
+
+		public String getUserName(String userId) {
+			final String sql = "select memberRealName from `memberInfo` where memberID=? limit 1";
+			ResultSet result = null;
+
+			try {
+				PreparedStatement statement = getPool().getConnection()
+				.prepareStatement(sql);
+				statement.setString(1, userId);
+				statement.execute();
+				result = statement.getResultSet();
+
+				if (result.first()) {
+					return result.getString(1);
+				} else {
+					return null;
+				}
+			} catch (SQLException e) {
+
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		public boolean getUserProgressStatus(String userId) {
+			final String sql = "select isInProgress from `memberInfo` where memberID=? limit 1";
+			ResultSet result = null;
+
+			try {
+				PreparedStatement statement = getPool().getConnection()
+				.prepareStatement(sql);
+				statement.setString(1, userId);
+				statement.execute();
+				result = statement.getResultSet();
+
+				if (result.first()) {
+					return result.getString(1) == "Y" ? true : false;
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return false;
+		}
+
 	}
 }

@@ -1,8 +1,10 @@
 package com.RS.servlet;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
@@ -80,24 +82,21 @@ public class RegisterManager extends HttpServlet {
 	}
 
 	private class DB extends DBConnection {
-		private DataSource pool = null;
-
-		DB() {
-			pool = getPool();
-		}
 
 		boolean isValidRegister(String realName, String userId) {
-			final String callSQL = "call isValidNewUser(?,?,?)";
+			final String sql = "select memberRealName from memberInfo where memberID=?";
 			try {
-				CallableStatement statement = pool.getConnection().prepareCall(
-				callSQL);
-				statement.registerOutParameter(3, Types.INTEGER);
-				statement.setString(1, realName);
-				statement.setString(2, userId);
-
+				PreparedStatement statement = getPool().getConnection().prepareStatement(sql);
+				statement.setString(1, userId);
+	
 				statement.execute();
+				ResultSet result = statement.getResultSet();
+				if(result.first()){
+					return result.getString(1).equals(realName);
+				}else{
+					return false;
+				}
 
-				return statement.getInt(3) > 0;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -110,7 +109,7 @@ public class RegisterManager extends HttpServlet {
 			int result = 0;
 
 			try {
-				PreparedStatement statement = pool.getConnection()
+				PreparedStatement statement = getPool().getConnection()
 				.prepareStatement(sql);
 				statement.setString(2, userId);
 				statement.setString(1, pwd);

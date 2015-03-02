@@ -18,7 +18,8 @@ import com.RS.model.ProjectInfo;
  * Implementation manipulations to project files
  * 
  */
-//TODO DASHBOARD viewer should help manager to identify the type of project by set the PendingProjectType request parameter.
+// TODO DASHBOARD viewer should help manager to identify the type of project by
+// set the PendingProjectType request parameter.
 
 @WebServlet("/DashBoard")
 public class UserDashboardManager extends HttpServlet {
@@ -36,25 +37,26 @@ public class UserDashboardManager extends HttpServlet {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void init(){
+	public void init() {
 		getServletContext().setAttribute("DashBoard", this);
 	}
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
 	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		String strRequestMethod = request.getParameter("method");
 		CurrentUserInformation info = (CurrentUserInformation) session
-				.getAttribute("UserInformation");
+		.getAttribute("UserInformation");
 
 		if (strRequestMethod == null) {
 
 			request.setAttribute("usrProjectItems", info.getProjects());
 			request.getRequestDispatcher("DashBoardPage.jsp").forward(request,
-					response);
+			response);
 
 		} else {
 			String strProjectUID = request.getParameter("ProjectUID");
@@ -68,35 +70,38 @@ public class UserDashboardManager extends HttpServlet {
 				case RQ_DELETE:
 					info.deleteProjectItem(ProjectUID);
 					response.sendRedirect(response
-							.encodeRedirectURL("DashBoard"));
+					.encodeRedirectURL("DashBoard"));
 					return;
 				case RQ_MODIFY:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
 					request.getRequestDispatcher("Modify")
-							.forward(request, response);
+					.forward(request, response);
 					return;
 				case RQ_PRINTSELECTION:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
 					request.getRequestDispatcher("ProjectPrintManager")
-							.forward(request, response);
+					.forward(request, response);
 					return;
 				case RQ_VIEWDETAIL:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
-					request.getRequestDispatcher("viewProjectDetail").forward(request, response);
+					request.getRequestDispatcher("viewProjectDetail").forward(
+					request, response);
 					return;
 				default:
 					response.sendError(HttpServletResponse.SC_NO_CONTENT);
 				}
 			} else {
-				switch(method){
+				switch (method) {
 				case RQ_NEW:
 					String strProjectType = request.getParameter("ProjectType");
-					pendingProject = info.addProjectItem(Integer.parseInt(strProjectType));
+					pendingProject = info.addProjectItem(Integer
+					.parseInt(strProjectType));
 
-					response.sendRedirect(response.encodeRedirectURL("DashBoard"));
+					response.sendRedirect(response
+					.encodeRedirectURL("DashBoard"));
 
 					return;
 				}
@@ -112,14 +117,13 @@ public class UserDashboardManager extends HttpServlet {
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+	HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		CurrentUserInformation info = (CurrentUserInformation) session
-				.getAttribute("UserInformation");
+		.getAttribute("UserInformation");
 		String strRequestMethod = request.getParameter("method");
 		String[] CheckedProjects = request
-				.getParameterValues("CheckedProjects");
+		.getParameterValues("CheckedProjects");
 
 		if (strRequestMethod != null && CheckedProjects != null) {
 
@@ -137,12 +141,12 @@ public class UserDashboardManager extends HttpServlet {
 
 				for (int i = 0; i < CheckedProjects.length; i++) {
 					tempP = info.getProjectItem(Long
-							.parseLong(CheckedProjects[i]));
+					.parseLong(CheckedProjects[i]));
 					pendingProjects.add(tempP);
 				}
 
 				request.getRequestDispatcher("ProjectPrintManager").forward(
-						request, response);
+				request, response);
 				return;
 			default:
 				response.sendError(HttpServletResponse.SC_NO_CONTENT);
@@ -177,11 +181,11 @@ public class UserDashboardManager extends HttpServlet {
 		return RQ_VIEWDETAIL;
 	}
 
-	public int getProjectTypeApplication(){
+	public int getProjectTypeApplication() {
 		return ProjectInfo.projectTypeApplication;
 	}
-	
-	public int getProjectTypeSummary(){
+
+	public int getProjectTypeSummary() {
 		return ProjectInfo.projectTypeSummary;
 	}
 }

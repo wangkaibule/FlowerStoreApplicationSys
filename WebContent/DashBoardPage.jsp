@@ -1,21 +1,21 @@
-<%@ page language="java" contentType="text/html; charset=GB18030"
-	pageEncoding="GB18030"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=GB18030">
-<title>项目列表</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>椤圭洰鍒楄〃</title>
 </head>
 <body>
 	<div class="topmenu">
 		<c:if test="${UserInformation.loggedin eq true }">
 			<a
-				href="DashBoard?method=${DashBoard.rqNew }&ProjectType=${DashBoard.projectTypeApplication}">申请新项目</a>
+				href="DashBoard?method=${DashBoard.rqNew }&ProjectType=${DashBoard.projectTypeApplication}">鐢宠鏂伴」鐩�</a>
 		</c:if>
 		<c:if test="${UserInformation.loggedin eq false }">
-			<a href="register">申请新项目</a>
+			<a href="Register">鐢宠鏂伴」鐩�</a>
 
 		</c:if>
 
@@ -25,9 +25,9 @@
 			<thead>
 				<tr>
 					<td>&nbsp</td>
-					<td>序号</td>
-					<td>标题</td>
-					<td>操作</td>
+					<td>搴忓彿</td>
+					<td>鏍囬</td>
+					<td>鎿嶄綔</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -44,14 +44,14 @@
 						<td><div class="ProjectToolkit">
 								<c:if test="${current.level.removable }">
 									<a
-										href="DashBoard?method=${DashBoard.rqDelete }&ProjectUID=${current.projectUID}">删除</a>
+										href="DashBoard?method=${DashBoard.rqDelete }&ProjectUID=${current.projectUID}">鍒犻櫎</a>
 								</c:if>
 								<c:if test="${current.level.modifiable }">
 									<a
-										href="DashBoard?method=${DashBoard.rqModify }&ProjectUID=${current.projectUID}&ProjectType=${current.projectItem.projectType}">修改</a>
+										href="DashBoard?method=${DashBoard.rqModify }&ProjectUID=${current.projectUID}&ProjectType=${current.projectItem.projectType}">淇敼</a>
 								</c:if>
 								<a
-									href="DashBoard?method=${DashBoard.rqPrintselection }&ProjectUID=${current.projectUID}">下载</a>
+									href="DashBoard?method=${DashBoard.rqPrintselection }&ProjectUID=${current.projectUID}">涓嬭浇</a>
 							</div></td>
 					</tr>
 				</c:forEach>

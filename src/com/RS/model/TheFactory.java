@@ -2,8 +2,8 @@ package com.RS.model;
 
 import com.RS.model.factory.*;
 
-public class TheFactory {
-	public static ProjectFactory getProjectFactory(int projectType){
+class TheFactory {
+	protected static ProjectFactory getProjectFactory(int projectType){
 		
 		ProjectFactory project = null;
 		

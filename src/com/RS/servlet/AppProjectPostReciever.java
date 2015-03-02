@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.RS.model.AccessLeveled;
 import com.RS.model.AppProjectContent;
 import com.RS.model.AppProjectContent.Content;
+import com.RS.model.ApplicationProject;
 import com.RS.model.TeamMemberInfo;
 
 /**
@@ -52,6 +54,11 @@ public class AppProjectPostReciever extends HttpServlet {
 		AppProjectContent.Content.Builder content = (AppProjectContent.Content.Builder) request
 		.getSession(false).getAttribute("Content");
 
+		if (title == null ) {
+			response.sendError(HttpServletResponse.SC_NO_CONTENT);
+			return;
+		}
+
 		if (title.equals("teacherUpdate")) {
 			isSuccess = invoke(field, value, content.getTeacherBuilder(),
 			response);
@@ -64,9 +71,16 @@ public class AppProjectPostReciever extends HttpServlet {
 			if (list.size() - 1 < index) {
 				content.addMembers(new TeamMemberInfo().builder());
 			} else {
-				Content.MemberInfo.Builder builder = content.getMembersBuilder(index);
+				Content.MemberInfo.Builder builder = content
+				.getMembersBuilder(index);
 				isSuccess = invoke(field, value, builder, response);
 			}
+		} else if (title.equals("memberInfoDelete")) {
+			int index = Integer.parseInt(request.getParameter("index"));
+			ApplicationProject project = (ApplicationProject) request
+			.getSession(false).getAttribute(
+			ProjectContentManager.pendingProject);
+			project.deleteTeamMember(index);
 		}
 
 		if (isSuccess) {
@@ -78,7 +92,7 @@ public class AppProjectPostReciever extends HttpServlet {
 	private boolean invoke(String field, String value, Object builder,
 	HttpServletResponse response) throws IOException {
 		try {
-			field = field.substring(0,1).toUpperCase()+field.substring(1);
+			field = field.substring(0, 1).toUpperCase() + field.substring(1);
 			Method method = builder.getClass().getMethod("set" + field,
 			String.class);
 			method.invoke(builder, value);
