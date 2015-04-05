@@ -3,21 +3,19 @@ package com.RS.model.level;
 import com.RS.model.AccessLevel;
 import com.RS.model.AccessLeveled;
 import com.RS.model.ProjectInfo;
-import com.RS.model.ProjectInfo;
 
-public class Printable implements AccessLeveled {
-	
+public class NotViewable implements AccessLeveled {
 	AccessLeveled leveledItem;
 	
-	public Printable(AccessLeveled o) {
+	public NotViewable(AccessLeveled o) {
+
 		leveledItem = o;
-		
 	}
 
 	@Override
 	public AccessLevel getLevel() {
 		AccessLevel level = leveledItem.getLevel();
-		level.setBit(posPrintable);
+		level.setBit(posNotViewable);
 		return level;
 	}
 

@@ -1,4 +1,4 @@
-package com.RS.model.factory;
+package com.RS.model;
 
 import com.RS.model.ProjectInfo;
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentList xmlns="http://www.ncepu.edu/ContentInfo">
+	<Content>
+		<type>AP</type>
+		<projectClass>com.RS.model.project.application.ApplicationProject</projectClass>
+		<contentClass>com.RS.model.project.application.AppProjectContent$Content</contentClass>
+		<fillerClass>wkBule.docFiller.ApplicationProjectFiller</fillerClass>
+		<template>ApplicationProjectTemplate.docx</template>
+		<editorPage>ApplicationEditor.jsp</editorPage>
+		<projectName>申请新项目</projectName>
+	</Content>
+</ContentList>

@@ -60,8 +60,7 @@
 				<table>
 					<tr>
 						<td><span class="formLabel">请输入学号</span></td>
-						<td><input type="text" name="${LoginManager.formusernameid }"
-							value="${LoginManager.formtypeviewer }"></td>
+						<td><input type="text" name="${LoginManager.formusernameid }"></td>
 					</tr>
 					<tr>
 						<td><span class="formLabel">请输入姓名</span></td>

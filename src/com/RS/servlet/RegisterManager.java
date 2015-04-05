@@ -1,21 +1,16 @@
 package com.RS.servlet;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.jdbc.pool.DataSource;
 
 import com.RS.model.DBConnection;
 
@@ -29,9 +24,9 @@ public class RegisterManager extends HttpServlet {
 	private static final String regId = "RegID";
 	private static final String regPassword = "RegPassword";
 	private static final int statusUserNX = 0;
-	private static final String formRealNameID="realName";
-	private static final String formIDid="schoolID";
-	private static final String formPWDid="pwd";
+	private static final String formRealNameID = "realName";
+	private static final String formIDid = "schoolID";
+	private static final String formPWDid = "pwd";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -50,9 +45,10 @@ public class RegisterManager extends HttpServlet {
 	 *      response)
 	 */
 	protected void doGet(HttpServletRequest request,
-	HttpServletResponse response) throws ServletException, IOException {
+			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		request.getRequestDispatcher("RegisterPage.jsp").forward(request, response);
+		request.getRequestDispatcher("RegisterPage.jsp").forward(request,
+				response);
 	}
 
 	/**
@@ -60,23 +56,22 @@ public class RegisterManager extends HttpServlet {
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request,
-	HttpServletResponse response) throws ServletException, IOException {
+			HttpServletResponse response) throws ServletException, IOException {
 
-		request.setCharacterEncoding("GB18030");
+		request.setCharacterEncoding("UTF-8");
 		String registerUserName = (String) request.getParameter(formRealNameID);
 		String registerID = (String) request.getParameter(formIDid);
 		String registerPassword = (String) request.getParameter(formPWDid);
 
 		DB db = new DB();
 
-		if (db.isValidRegister(registerUserName, registerID))
-		{
+		if (db.isValidRegister(registerUserName, registerID)) {
 			db.registerUser(registerID, registerPassword);
-			response.sendRedirect("Login?status="+LoginManager.statusRegSuccessful);
+			response.sendRedirect("Login?status="
+					+ LoginManager.statusRegSuccessful);
 			return;
-		}
-		else {
-			response.sendRedirect("Register?status="+statusUserNX);
+		} else {
+			response.sendRedirect("Register?status=" + statusUserNX);
 			return;
 		}
 	}
@@ -85,15 +80,17 @@ public class RegisterManager extends HttpServlet {
 
 		boolean isValidRegister(String realName, String userId) {
 			final String sql = "select memberRealName from memberInfo where memberID=?";
+			Connection con = null;
 			try {
-				PreparedStatement statement = getPool().getConnection().prepareStatement(sql);
+				con = getPool().getConnection();
+				PreparedStatement statement = con.prepareStatement(sql);
 				statement.setString(1, userId);
-	
+
 				statement.execute();
 				ResultSet result = statement.getResultSet();
-				if(result.first()){
+				if (result.first()) {
 					return result.getString(1).equals(realName);
-				}else{
+				} else {
 					return false;
 				}
 
@@ -101,16 +98,18 @@ public class RegisterManager extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
+			} finally {
+				close(con);
 			}
 		}
 
 		boolean registerUser(String userId, String pwd) {
 			final String sql = "UPDATE `memberInfo` set memberPWD=? where memberID=?";
 			int result = 0;
-
+			Connection con =null;
 			try {
-				PreparedStatement statement = getPool().getConnection()
-				.prepareStatement(sql);
+				con = getPool().getConnection();
+				PreparedStatement statement = con.prepareStatement(sql);
 				statement.setString(2, userId);
 				statement.setString(1, pwd);
 				result = statement.executeUpdate();
@@ -125,6 +124,8 @@ public class RegisterManager extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
+			} finally{
+				close(con);
 			}
 		}
 	}

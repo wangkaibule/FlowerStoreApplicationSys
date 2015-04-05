@@ -3,7 +3,6 @@ package com.RS.model.level;
 import com.RS.model.AccessLevel;
 import com.RS.model.AccessLeveled;
 import com.RS.model.ProjectInfo;
-import com.RS.model.ProjectInfo;
 
 public class Modifiable implements AccessLeveled{
 AccessLeveled leveledItem;

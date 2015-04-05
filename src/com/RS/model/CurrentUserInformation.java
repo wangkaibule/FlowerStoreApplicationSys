@@ -1,5 +1,6 @@
 package com.RS.model;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +31,6 @@ public class CurrentUserInformation {
 		ProjectItemLib lib = ProjectItemLib.getProjectLib();
 		lib.getUserProjects(userId, loggedin, projects);
 	}
-	
 
 	public boolean deleteProjectItem(long projectUID) {
 		Iterator<AccessLeveled> tempProjects = projects.iterator();
@@ -52,11 +52,11 @@ public class CurrentUserInformation {
 		return isSuccess;
 	}
 
-	public AccessLeveled addProjectItem(int projectType) {
+	public AccessLeveled addProjectItem(String projectType) {
 		AccessLeveled newItem = null;
 
 		ProjectItemLib lib = ProjectItemLib.getProjectLib();
-		ProjectInfo project = lib.createProject(projectType,userId);
+		ProjectInfo project = lib.createProject(projectType, userId);
 
 		project.fillAuthorInfo(new TeamMemberInfo(userId));
 		newItem = new Modifiable(project);
@@ -112,10 +112,11 @@ public class CurrentUserInformation {
 		public String getUserName(String userId) {
 			final String sql = "select memberRealName from `memberInfo` where memberID=? limit 1";
 			ResultSet result = null;
+			Connection con = null;
 
 			try {
-				PreparedStatement statement = getPool().getConnection()
-				.prepareStatement(sql);
+				con = getPool().getConnection();
+				PreparedStatement statement = con.prepareStatement(sql);
 				statement.setString(1, userId);
 				statement.execute();
 				result = statement.getResultSet();
@@ -129,16 +130,19 @@ public class CurrentUserInformation {
 
 				e.printStackTrace();
 				return null;
+			} finally {
+				close(con);
 			}
 		}
 
 		public boolean getUserProgressStatus(String userId) {
 			final String sql = "select isInProgress from `memberInfo` where memberID=? limit 1";
 			ResultSet result = null;
+			Connection con = null;
 
 			try {
-				PreparedStatement statement = getPool().getConnection()
-				.prepareStatement(sql);
+				con = getPool().getConnection();
+				PreparedStatement statement = con.prepareStatement(sql);
 				statement.setString(1, userId);
 				statement.execute();
 				result = statement.getResultSet();
@@ -149,6 +153,8 @@ public class CurrentUserInformation {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				close(con);
 			}
 			return false;
 		}

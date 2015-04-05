@@ -19,17 +19,14 @@ public class AccessLevel implements AccessLeveled {
 		return level.get(posModifiable);
 	}
 
-	public boolean isPrintable() {
-		return level.get(posPrintable);
+	public boolean isNotPrintable() {
+		return level.get(posNotPrintable);
 	}
 
-	public boolean isViewable() {
-		return level.get(posPrintable);
+	public boolean isNotViewable() {
+		return level.get(posNotPrintable);
 	}
 
-	public boolean isAddable() {
-		return level.get(posAddable);
-	}
 	
 	public void setBit(int pos){
 		level.set(pos);

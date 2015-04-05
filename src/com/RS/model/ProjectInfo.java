@@ -1,9 +1,11 @@
 package com.RS.model;
 
+import java.util.List;
+
+import wkBule.docFiller.xml.contentDescriptor.Content;
+
 public abstract class ProjectInfo implements AccessLeveled {
 	protected long projectUID = -1L;
-	public static final int projectTypeApplication = 0;
-	public static final int projectTypeSummary = 1;
 	protected boolean modified = false;
 	protected ProjectInfo pItem;
 	protected int inHandleCount = 0;
@@ -12,7 +14,7 @@ public abstract class ProjectInfo implements AccessLeveled {
 	public long getProjectUID() {
 		return projectUID;
 	}
-
+	
 	public boolean deleteProject(){
 		isDeleted = true;
 		return onDeleteProject();
@@ -33,10 +35,18 @@ public abstract class ProjectInfo implements AccessLeveled {
 			modified = false;
 		}
 	}
+	
+	public static List<Content> getDefinedProjects(){
+		return new TheFactory().getProjectsList();
+	}
+	
+	public String getEditorPage(){
+		return TheFactory.getProjectsMap().get(getProjectType()).getEditorPage();
+	}
 
 	protected abstract void storeContent();
 
-	public abstract int getProjectType();
+	public abstract String getProjectType();
 
 	public abstract Object getContent();
 
@@ -46,8 +56,10 @@ public abstract class ProjectInfo implements AccessLeveled {
 
 	protected abstract boolean onDeleteProject();
 
-	public abstract String getProjectTitle();
+	abstract public Object getViewer();
 
+	public abstract String getProjectTitle();
+	
 	@Override
 	public AccessLevel getLevel() {
 
@@ -59,16 +71,7 @@ public abstract class ProjectInfo implements AccessLeveled {
 		return pItem;
 	}
 
-	public int getProjectTypeApplication() {
-		return projectTypeApplication;
-	}
-
-	public int getProjectTypeSummary() {
-		return projectTypeSummary;
-	}
-
 	public void setModified() {
 		this.modified = true;
 	}
-
 }

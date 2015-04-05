@@ -2,6 +2,7 @@ package com.RS.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +24,10 @@ import com.RS.model.ProjectInfo;
 
 @WebServlet("/DashBoard")
 public class UserDashboardManager extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final int RQ_NEW = 0;
 	private static final int RQ_MODIFY = 1;
 	private static final int RQ_DELETE = 2;
@@ -87,7 +92,8 @@ public class UserDashboardManager extends HttpServlet {
 				case RQ_VIEWDETAIL:
 					pendingProject = info.getProjectItem(ProjectUID);
 					request.setAttribute("PendingProject", pendingProject);
-					request.getRequestDispatcher("viewProjectDetail").forward(
+					request.setAttribute("isView", true);
+					request.getRequestDispatcher("Modify").forward(
 					request, response);
 					return;
 				default:
@@ -97,8 +103,7 @@ public class UserDashboardManager extends HttpServlet {
 				switch (method) {
 				case RQ_NEW:
 					String strProjectType = request.getParameter("ProjectType");
-					pendingProject = info.addProjectItem(Integer
-					.parseInt(strProjectType));
+					pendingProject = info.addProjectItem(strProjectType);
 
 					response.sendRedirect(response
 					.encodeRedirectURL("DashBoard"));
@@ -180,12 +185,8 @@ public class UserDashboardManager extends HttpServlet {
 	public int getRqViewdetail() {
 		return RQ_VIEWDETAIL;
 	}
-
-	public int getProjectTypeApplication() {
-		return ProjectInfo.projectTypeApplication;
-	}
-
-	public int getProjectTypeSummary() {
-		return ProjectInfo.projectTypeSummary;
+	
+	public List<?> getProjectLists(){
+		return ProjectInfo.getDefinedProjects();
 	}
 }

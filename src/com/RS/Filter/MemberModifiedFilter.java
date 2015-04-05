@@ -11,9 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
-import com.RS.model.ApplicationProject;
 import com.RS.model.ProjectInfo;
-import com.RS.servlet.ProjectContentManager;
+import com.RS.model.project.application.ApplicationProject;
 
 /**
  * Servlet Filter implementation class MemberModifiedFilter
@@ -45,7 +44,7 @@ public class MemberModifiedFilter implements Filter {
 			ProjectInfo project = (ProjectInfo)re.getSession(false).getAttribute("theProject");
 			String title = re.getParameter("title");
 
-			if(project instanceof ApplicationProject&&title!=null&&title.equals("memberInfoUpdate")){
+			if(project instanceof ApplicationProject&&title!=null&&(title.equals("memberInfoUpdate"))){
 				((ApplicationProject)project).setMemberModified();
 			}
 		}

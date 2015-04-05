@@ -2,12 +2,12 @@ package com.RS.servlet;
 
 import java.io.IOException;
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -58,10 +58,10 @@ public class LoginManager extends HttpServlet {
 	 *      response)
 	 */
 	protected void doGet(HttpServletRequest request,
-	HttpServletResponse response) throws ServletException, IOException {
+			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		request.getRequestDispatcher("LoginPage.jsp")
-		.forward(request, response);
+				.forward(request, response);
 		return;
 	}
 
@@ -70,9 +70,9 @@ public class LoginManager extends HttpServlet {
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request,
-	HttpServletResponse response) throws ServletException, IOException {
+			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
+		request.setCharacterEncoding("UTF-8");
 		String formUserName = request.getParameter(formUserNameId);
 		String strFormType = request.getParameter(formTypeId);
 
@@ -80,7 +80,7 @@ public class LoginManager extends HttpServlet {
 
 		if (strFormType == null) {
 			request.getRequestDispatcher("LoginPage.jsp").forward(request,
-			response);
+					response);
 			return;
 		}
 
@@ -93,12 +93,12 @@ public class LoginManager extends HttpServlet {
 			String formPassword = request.getParameter(formPasswordId);
 
 			if (formPassword != null && formUserName != null
-			&& db.isValidUser(formUserName, formPassword)) {
+					&& db.isValidUser(formUserName, formPassword)) {
 				UsrInfo = new CurrentUserInformation(formUserName, true);
 			} else {
 				request.setAttribute("invalidPWD", true);
 				request.getRequestDispatcher("LoginPage.jsp").forward(request,
-				response);
+						response);
 				return;
 			}
 			break;
@@ -107,21 +107,20 @@ public class LoginManager extends HttpServlet {
 			String formUserRealName = request.getParameter(formRealNameId);
 
 			if (formUserName != null && formUserRealName != null
-			&& db
-			.isUserNameExist(formUserRealName, formUserName)) {
+					&& db.isUserNameExist(formUserRealName, formUserName)) {
 
-				UsrInfo = new CurrentUserInformation(formUserName,false);
+				UsrInfo = new CurrentUserInformation(formUserName, false);
 			} else {
 				request.setAttribute("invalidID", true);
 				request.getRequestDispatcher("LoginPage.jsp").forward(request,
-				response);
+						response);
 				return;
 			}
 			break;
 
 		default:
 			request.getRequestDispatcher("LoginPage.jsp").forward(request,
-			response);
+					response);
 			return;
 		}
 
@@ -140,10 +139,11 @@ public class LoginManager extends HttpServlet {
 
 		private boolean isValidUser(String userID, String userPWD) {
 			final String sql = "call isValidUser(?,?,?)";
+			Connection con =null;
 
 			try {
-				CallableStatement statement = pool.getConnection().prepareCall(
-				sql);
+				con = pool.getConnection();
+				CallableStatement statement = con.prepareCall(sql);
 				statement.registerOutParameter(3, Types.INTEGER);
 				statement.setString(1, userID);
 				statement.setString(2, userPWD);
@@ -154,26 +154,34 @@ public class LoginManager extends HttpServlet {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return false;
+			} finally {
+				close(con);
 			}
 		}
 
 		private boolean isUserNameExist(String realName, String userID) {
-			final String sql = "select count(*) from memberInfo where memberRealName=? and memberID = ? limit 1";
+			final String sql = "select memberRealName from memberInfo where memberID = ? limit 1";
 			ResultSet result = null;
+			Connection con = null;
 
 			try {
-				PreparedStatement statement = pool.getConnection()
-				.prepareStatement(sql);
-				statement.setString(1, realName);
-				statement.setString(2, userID);
+				con = pool.getConnection();
+				PreparedStatement statement = con.prepareStatement(sql);
+				statement.setString(1, userID);
 
 				statement.execute();
 				result = statement.getResultSet();
 
-				return result.first();
+				if (result.first()) {
+					return result.getString(1).equals(realName);
+				} else {
+					return false;
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return false;
+			} finally {
+				close(con);
 			}
 		}
 	}

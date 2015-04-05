@@ -1,15 +1,17 @@
 package com.RS.model;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class DBConnection {
 	private static DataSource pool = null;
+	private static Logger log = LoggerFactory.getLogger(DBConnection.class);
 
 	protected DBConnection() {
 		if (pool != null) {
@@ -20,7 +22,7 @@ public abstract class DBConnection {
 
 			try {
 				property.setUrl(p.getProperty("url"));
-				property.setUrl("jdbc:mysql://localhost/wangkaibuletest");
+				property.setUrl("jdbc:mysql://localhost/wangkaibuletest?useUnicode=true&characterEncoding=UTF-8");
 				property.setDriverClassName("com.mysql.jdbc.Driver");
 				property.setUsername("root");
 				property.setPassword("wangkaibule");
@@ -42,7 +44,6 @@ public abstract class DBConnection {
 				property.setJdbcInterceptors(
 				"org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;" +
 				"org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer");
-				DataSource datasource = new DataSource();
 				pool = new DataSource();
 				pool.setPoolProperties(property);
 				// property.setDbProperties(p);
@@ -57,5 +58,13 @@ public abstract class DBConnection {
 
 	protected DataSource getPool() {
 		return pool;
+	}
+	
+	protected void close(Connection con){
+			try {
+				con.close();
+			} catch (SQLException e) {
+				log.warn("Exception occurred during close the connection:",e);
+			}
 	}
 }

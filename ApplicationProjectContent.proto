@@ -1,6 +1,6 @@
 package ApplicationProjectContent;
 
-option java_package = "com.RS.model";
+option java_package = "com.RS.model.project.application";
 option java_outer_classname = "AppProjectContent";
 
 message Content{
@@ -21,20 +21,20 @@ message Content{
 	repeated MemberInfo members = 14;
 
 	message TeacherInfo{
-		required string name = 1 [default = "-"];
-		required string department = 2 [default = "-"];
-		required string profession = 3 [default = "-"];
-		required string professionalTitle = 4 [default = "-"];
-		required string responsibility = 5 [default = "-"];
-		required string tel = 6 [default = "-"];
+		optional string name = 1 [default = "-"];
+		optional string department = 2 [default = "-"];
+		optional string profession = 3 [default = "-"];
+		optional string professionalTitle = 4 [default = "-"];
+		optional string responsibility = 5 [default = "-"];
+		optional string tel = 6 [default = "-"];
 	}
 
 	message MemberInfo{
-		required string name = 1 [default = "-"];
-		required string department = 2 [default = "-"];
-		required string profession = 3 [default = "-"];
-		required string studentID = 4 [default = "-"];
-		required string responsibility = 5 [default = "-"];
-		required string tel = 6 [default = "-"];
+		optional string name = 1 [default = "-"];
+		optional string department = 2 [default = "-"];
+		optional string profession = 3 [default = "-"];
+		optional string studentID = 4 [default = "-"];
+		optional string responsibility = 5 [default = "-"];
+		optional string tel = 6 [default = "-"];
 	}
 }

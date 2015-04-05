@@ -11,11 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.RS.model.AccessLeveled;
-import com.RS.model.AppProjectContent;
-import com.RS.model.AppProjectContent.Content;
-import com.RS.model.ApplicationProject;
 import com.RS.model.TeamMemberInfo;
+import com.RS.model.project.application.AppProjectContent;
+import com.RS.model.project.application.AppProjectContent.Content;
+import com.RS.model.project.application.ApplicationProject;
 
 /**
  * Servlet implementation class AppProjectPostReciever
@@ -47,6 +46,7 @@ public class AppProjectPostReciever extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 	HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		String title = request.getParameter("title");
 		String field = request.getParameter("name");
 		String value = request.getParameter("value");
@@ -76,10 +76,17 @@ public class AppProjectPostReciever extends HttpServlet {
 				isSuccess = invoke(field, value, builder, response);
 			}
 		} else if (title.equals("memberInfoDelete")) {
-			int index = Integer.parseInt(request.getParameter("index"));
+			String[] strIndex = request.getParameterValues("index");
+			int[] index = new int[strIndex.length];
 			ApplicationProject project = (ApplicationProject) request
 			.getSession(false).getAttribute(
 			ProjectContentManager.pendingProject);
+			
+			int i =0;
+			for(String str:strIndex){
+				index[i] = Integer.parseInt(str);
+				i++;
+			}
 			project.deleteTeamMember(index);
 		}
 
