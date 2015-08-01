@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
  pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -16,6 +17,7 @@
 </head>
 <body onload="javascrit:init();">
  <div class="gwd-div-c31z" id="elementWrapper">
+  <div id="exitBut" class=" toolbuttom">退出登录</div>
   <img class="gwd-img-8ns1" id="logo" alt="LOGO" src="pic/logo.png">
   <div class="gwd-div-gqde" id="banner">
    <h1 class="gwd-h1-5jbh">
@@ -33,22 +35,23 @@
     </div>
    </div>
    <ul class="gwd-ul-qm54">
-   <c:forEach items="${DashBoard.projectLists }" var="current">
-    <li class="gwd-li-9n23 gwd-new-class-ild5">
-     <div class="gwd-div-4a1a gwd-new-class-9wla" style="">
-      <div class="gwd-div-plh5" style="">
-       <c:if test="${UserInformation.loggedin eq true }">
-        <a
-         href="DashBoard?method=${DashBoard.rqNew }&ProjectType=${current.type}" class=" gwd-new-class-b7yd">${current.projectName }</a>
-       </c:if>
-       <c:if test="${UserInformation.loggedin eq false }">
-        <a href="Register" class=" gwd-new-class-b7yd">申请表</a>
+    <c:forEach items="${DashBoard.projectLists }" var="current">
+     <li class="gwd-li-9n23 gwd-new-class-ild5">
+      <div class="gwd-div-4a1a gwd-new-class-9wla" style="">
+       <div class="gwd-div-plh5" style="">
+        <c:if test="${UserInformation.loggedin eq true }">
+         <a
+          href="DashBoard?method=${DashBoard.rqNew }&ProjectType=${current.type}"
+          class=" gwd-new-class-b7yd">${current.projectName }</a>
+        </c:if>
+        <c:if test="${UserInformation.loggedin eq false }">
+         <a href="Register" class=" gwd-new-class-b7yd">申请表</a>
 
-       </c:if>
+        </c:if>
+       </div>
       </div>
-     </div>
-    </li>
-   </c:forEach>
+     </li>
+    </c:forEach>
     <li
      class="gwd-li-9n23 gwd-new-class-ild5 gwd-li-57mn gwd-new-class-3lh5">
      <div class="gwd-div-4a1a gwd-div-0so7 " style="">
@@ -74,12 +77,16 @@
      </div>
     </div>
    </div>
-    <div class="gwd-div-zwqo">
-   <c:forEach varStatus="tableCount" var="current" items="${UserInformation.projects }">
+   <div class="gwd-div-zwqo">
+    <c:forEach varStatus="tableCount" var="current"
+     items="${UserInformation.projects }">
      <div class="gwd-div-fp6n">
       <div class="gwd-div-3n5x">
        <div class="gwd-div-k39l">
-        <span class="gwd-span-s3vu">${current.projectTitle }</span>
+        <span class="gwd-span-s3vu"><c:out
+          value="${fn:substring(current.projectTitle,0,16) }" />
+         <c:if test="${fn:length(current.projectTitle) > 15  }">...</c:if>
+        </span>
        </div>
       </div>
       <div class="gwd-div-tf9b">
@@ -114,7 +121,8 @@
          <div class="gwd-div-sudk gwd-div-c6sm gwd-div-yoyt">
           <div class="gwd-div-zbs3 gwd-div-yt65 gwd-div-mvxd">
            <a
-            href="DashBoard?method=${DashBoard.rqDelete }&ProjectUID=${current.projectUID}" class="deletebut">删除</a>
+            href="DashBoard?method=${DashBoard.rqDelete }&ProjectUID=${current.projectUID}"
+            class="deletebut">删除</a>
           </div>
          </div>
         </div>
@@ -132,8 +140,8 @@
        </div>
       </div>
      </div>
-   </c:forEach>
-    </div>
+    </c:forEach>
+   </div>
   </div>
  </div>
 

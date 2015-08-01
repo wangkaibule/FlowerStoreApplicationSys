@@ -48,54 +48,23 @@ function choosableClickEventHandler(e) {
 			+ ".jsp");
 }
 
-function addableClickEventHandler(e) {
-	var jtarget = $(e.target);
-	var input = $("[group="+jtarget.attr('group')+"].inputAddable");
-	
-	
-}
-
-function addableAppender(e) {
-	var add = $("[group=" + $(e).attr('group') + "].hiddenAddable");
-	var addParent = adkd;
-	var theInitiator = add.attr("name");
-	var counter = $("#" + theInitiator + "Title");
-	var group = add.attr("group");
-	var tmp = "[group=" + group + "][counter=" + group + "]";
-	var Index = $(tmp).length;
-	var row = counter.attr("rowspan");
-	var fetcher = function(data) {
-
-		addParent.before(data);
-		counter.attr("rowspan", parseInt(row) + 1);
-
-		$(".pending").each(function() {
-			this.setAttribute("data-Index", parseInt(Index));
-			this.setAttribute("data-title", theInitiator);
-			$(this).removeClass("pending");
-		});
+function addMember(){
+	var panel = $("#memberPanel");
+	var wrapper = $("#memberPanelWrapper");
+	var button = $("#addMember");
+	var origValue;
+	var finish = function(){
+		button.html(origValue);
+		$("#counter").html($(".member").length);
+		$("body").on("keypress","#idInput",inputReturnHitEventHandler);
+		$("body").on("click",".member",memberItemClickEventHandler);
+		$("body").on("click","#addConfirm",addButtonClickEventHandler);
 	}
-
-	$.ajax({
-		url : "formPieces/" + theInitiator + "Piece.jsp",
-		method : "GET",
-		success : function(data) {
-			fetcher(data)
-		},
-		dataType : "html"
-	})
-
-	console.log(Index);
-
-	$.ajax({
-		url : "AppProjectReciever",
-		type : "POST",
-		data : {
-			title : add.attr("name") + "Update",
-			index : Index,
-		}
-	});
-
+	
+	origValue = button.html();
+	button.html("正在加载....");
+	wrapper.show();
+	panel.load("memberPanel.jsp",finish);
 }
 
 function editableInputClickEventHandler(event) {
@@ -106,10 +75,14 @@ function editableInputClickEventHandler(event) {
 	if (e.is("td") && !e.attr("pending")) {
 		theInput.removeAttr("id").removeAttr("style").attr("name",
 				theElementName).addClass(e.attr("class"));
-		theInput.val(e.children("pre").hide().text());
+		e.find("> *").hide();
+		theInput.val(e.find("pre").text());
 		e.append(theInput);
 		e.attr("pending", "true");
 		theInput.focus();
+		if(e.hasClass("twoRow")){
+			e.find("textarea").attr("rows","2");
+		}
 	}
 }
 
@@ -154,6 +127,8 @@ function datableClickEventHandler(e) {
 		return;
 	}
 
+	element.setAttribute('name', jtarget.attr("name"));
+	element.setAttribute("value",jtarget.html());
 	je.datepicker();
 	$(parent).append(element);
 	jtarget.remove();
@@ -166,7 +141,7 @@ function datableClickEventHandler(e) {
 		var month = parseInt(date.getMonth()) + 1;
 		var startDate = year + '-' + month + '-' + date.getDate();
 		if (jtarget.attr('name') === 'startTime') {
-			je.attr(startDate);
+			je.attr('value',startDate);
 		} else if (jtarget.attr('name') === 'finishTime') {
 			je.datepicker('option', "yearRange", year + ':'
 					+ (parseInt(year) + 1));
@@ -242,15 +217,13 @@ function init() {
 	if (handlerFlag) {
 		$('body').on("click", ".clickable", clickableClickEventHandler);
 		$('body').on("click", ".choosable", choosableClickEventHandler);
-		$('body')
-				.on("click", ".blurthensub", blurThenSubInputClickEventHandler);
-		$('body')
-				.on("focus", ".blurthensub", blurThenSubInputFocusEventHandler);
-		$('body').on("click", ".addable", addableClickEventHandler);
+		$('body').on("click", ".blurthensub", blurThenSubInputClickEventHandler);
+		$('body').on("focus", ".blurthensub", blurThenSubInputFocusEventHandler);
+		$('body').on("click", "#addMember", addMember);
 		$('body').on("click", ".editable", editableInputClickEventHandler);
-		$('body')
-				.on("click", ".editable > ", editableChildrenClickEventHandler);
+		$('body').on("click", ".editable > ", editableChildrenClickEventHandler);
 		$('body').on("click", '.datable', datableClickEventHandler);
+		$('#closer').on("click",function(){$("#memberPanelWrapper").hide()})
 	}
 
 	$("#back.toolbut").on('click', function() {
@@ -267,11 +240,8 @@ function init() {
 	$(document).on("keypress", 'form', function(e) {
 		var code = e.keyCode || e.which;
 		var jtarget = $(e.target)
-		console.log(code);
 		if (code == 13 && jtarget.is('input')) {
-			console.log('Inside');
 			e.preventDefault();
-			return false;
 		} else {
 			$("#theForm").data("changed", true);
 		}

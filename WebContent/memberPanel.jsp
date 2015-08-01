@@ -9,20 +9,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="generator" content="Google Web Designer 1.2.1.0121">
 <style type="text/css">
-html, body {
-	width: 100%;
-	height: 100%;
-	margin: 0px;
+.memberSelector:hover{
+   cursor:pointer;
+   background-color:rgb(233, 230, 210);
 }
-
-body {
-	-webkit-transform: perspective(1400px)
-		matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-	-webkit-transform-style: preserve-3d;
-	width: 100%;
-	background-color: transparent;
-}
-
 .gwd-div-nlvb {
 	width: 421px;
 	height: 412px;
@@ -97,6 +87,7 @@ body {
 	position: relative;
 	top: -47px;
 	left: 165.5px;
+    font:bold;
 }
 
 .gwd-input-j79g {
@@ -129,7 +120,7 @@ body {
 }
 
 .gwd-div-yiy9 {
-	width: 133px;
+	width: 146px;
 	height: 33px;
 	font-family: 'Times New Roman';
 	text-align: left;
@@ -196,23 +187,13 @@ body {
 	position: relative;
 	text-align: left;
 	width: 226px;
-	left: 120px;
+	left: 178px;
 	top: -282px;
-}
-
-.gwd-div-pzte {
-	border-color: rgb(255, 0, 0);
-	color: rgb(255, 0, 0);
-	height: 18px;
-	outline-color: rgb(255, 0, 0);
 	text-align: center;
-	width: 226px;
-	-webkit-column-rule-color: rgb(255, 0, 0);
-	-webkit-text-emphasis-color: rgb(255, 0, 0);
-	-webkit-text-fill-color: rgb(255, 0, 0);
-	-webkit-text-stroke-color: rgb(255, 0, 0);
 }
 </style>
+<script type="text/javascript" src="js/memberPanel.js"></script>
+	
 </head>
 
 <body>
@@ -222,17 +203,17 @@ body {
     <div class="gwd-div-npjo">已添加</div>
    </div>
    <div class="gwd-div-l34h">个成员</div>
-   <div class="gwd-div-n6gs" id="counter"><span id="counterNum"></span></div>
+   <div class="gwd-div-n6gs"><b id="counter"></b></div>
   </div>
   <div class="gwd-div-2hkp" style="">
    <input class="gwd-input-j79g" placeholder="输入学号后回车" id="idInput">
-   <button class="gwd-button-y8my" id="confirm">确定</button>
+   <button class="gwd-button-y8my" id="addConfirm">确定</button>
   </div>
   <div class="gwd-div-8n22">
-   <ul class="gwd-ul-70oq" style="">
-   <c:forEach items="${Content.memberList }" var="current">
+   <ul class="gwd-ul-70oq">
+   <c:forEach items="${Content.membersList }" var="current" begin="1">
     <li class="gwd-li-3luy member"> 
-     <div class="gwd-div-q7oq">
+     <div class="gwd-div-q7oq memberSelector">
       <div class="gwd-div-iaoj">${current.name }</div>
       <div class="gwd-div-3k1a">${current.studentID }</div>
      </div>
@@ -241,11 +222,9 @@ body {
    </ul>
   </div>
   <div class="gwd-div-yiy9">
-   <span class="gwd-span-gstg">已选择的组员:</span>
+   <span class="gwd-span-gstg">已选择的组员(点击以删除):</span>
   </div>
-  <div class="gwd-div-ltmp" style="display:hidden;">
-   <div class="gwd-div-pzte">错误显示</div>
-  </div>
+  <div class="gwd-div-ltmp" style="display:none;" id="errorDisplay">错误显示  </div>
  </div>
 </body>
 

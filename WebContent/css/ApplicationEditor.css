@@ -9,7 +9,17 @@ pre {
 	width:7.67in;
 }
 
+textarea.twoRow{
+	rows:2;
+}
 
+.tips {
+  float: right;
+  width: 300px;
+  right: 46px;
+  position: relative;
+  font-size: large;
+}
 
 textarea {
 	width: 100%;
@@ -56,10 +66,10 @@ input.clickable {
 }
 
 .scrollingbox {
-	position: fixed;
-	right: 0px ;
-	top: 100px;
-	width: 183px;
+  position: fixed;
+  right: 123px;
+  top: 262px;
+  width: 183px;
 }
 
 #boxtitle {
@@ -119,4 +129,23 @@ table, th, td {
 	top:-49px;
 	left:-10px;
 	position:relative;
+}
+
+#memberPanelWrapper{
+	float:left;
+	left:-421px;
+	top:-76px;
+	position:relative;
+}
+
+#closer{
+	position:relative;
+	top:-404px;
+	float:right;
+	right:23px;
+}
+
+#closer:hover{
+	cursor:pointer;
+	background-color:rgb(171,162,242)
 }

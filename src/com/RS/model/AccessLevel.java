@@ -24,7 +24,7 @@ public class AccessLevel implements AccessLeveled {
 	}
 
 	public boolean isNotViewable() {
-		return level.get(posNotPrintable);
+		return level.get(posNotViewable);
 	}
 
 	
@@ -53,5 +53,19 @@ public class AccessLevel implements AccessLeveled {
 	public String getProjectTitle() {
 		// TODO Auto-generated method stub
 		return leveledItem.getProjectTitle();
+	}
+	
+	@Override
+	public String toString(){
+		String result = "";
+		if(this.isModifiable())
+			result+="\'modifiable\'";
+		if(this.isNotPrintable())
+			result+=",\'notPrintable\'";
+		if(this.isNotViewable())
+			result+=",\'notViewable\'";
+		if(this.isRemovable())
+			result+=",\'removable\'";
+		return result;
 	}
 }

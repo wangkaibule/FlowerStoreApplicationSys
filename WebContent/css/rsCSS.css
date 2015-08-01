@@ -1,0 +1,58 @@
+.rs-button {
+	background-color: rgb(171, 162, 242);
+}
+
+.rs-back {
+	background-color: rgb(241, 241, 242);
+}
+
+.rs-list:first-child {
+	background-color: rgb(219, 213, 235);
+	margin-top: 0px;
+	margin-bottom: 3px;
+}
+
+.rs-list, .rs-list:first-child {
+	background-color: rgb(219, 213, 235);
+	margin-top: 1px;
+	margin-bottom: 3px;
+	width: 100%;
+}
+
+li {
+	margin-top: 2px;
+	width: 200px;
+}
+
+.rs-select:hover {
+	cursor: pointer;
+}
+
+blockquote {
+	background-color: rgb(241, 241, 242);
+	margin-bottom: 10px;
+	padding: 10px;
+}
+
+#wmd-preview * img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#wmd-preview * span.imgTitle {
+	text-align: center;
+	font-size: 10px;
+	display: block;
+}
+
+.rs-card {
+	background-color: rgb(219, 213, 235);
+	margin: 2px;
+}
+
+.rs-hover:hover {
+	color: rgb(241, 241, 242);
+	cursor: pointer;
+}
+}

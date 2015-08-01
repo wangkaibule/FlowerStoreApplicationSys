@@ -5,35 +5,49 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.RS.model.AccessLevel;
 import com.RS.model.DBConnection;
 import com.RS.model.ProjectFactory;
 import com.RS.model.ProjectInfo;
 import com.RS.model.TeamMemberInfo;
 import com.RS.model.project.application.AppProjectContent.Content;
+import com.RS.model.project.application.AppProjectContent.Content.Builder;
 
 public class ApplicationProject extends ProjectInfo {
 
 	private static final int categoryUndefined = -1;
-public static final int categoryCreationTrain = 0;
+	public static final int categoryCreationTrain = 0;
 	public static final int categoryBussinessTrain = 1;
 	public static final int categoryBussinessPractice = 2;
-	public static final String projectType="AP";
-	
-	private static Logger log = LoggerFactory.getLogger(ApplicationProject.class);
+
+	public static final int projectClassNational = 0;
+	public static final int projectClassProvincial = 1;
+	public static final int projectClassInSchool = 2;
+
+	public static final String projectType = "AP";
+
+	private static Logger log = LoggerFactory
+	.getLogger(ApplicationProject.class);
 
 	private Content.Builder theContent = null;
+	protected AccessLevel newAccessLevel = null;
+	protected int projectClass = -1;
 	private boolean memberModified = false;
-	
-	public ApplicationProject(){
-		
+	protected String projectNum = null;
+
+	public ApplicationProject() {
+
 	}
 
 	public ApplicationProject(long projectUID, boolean isNew) {
@@ -73,6 +87,18 @@ public static final int categoryCreationTrain = 0;
 
 	public void setMemberModified() {
 		memberModified = true;
+	}
+
+	public void setNewAccessLevel(AccessLevel newAccessLevel) {
+		this.newAccessLevel = newAccessLevel;
+	}
+
+	public void setProjectClass(int projectClass) {
+		this.projectClass = projectClass;
+	}
+
+	public void setProjectNum(String projectNum) {
+		this.projectNum = projectNum;
 	}
 
 	@Override
@@ -116,6 +142,7 @@ public static final int categoryCreationTrain = 0;
 			}
 			db.writeContent(theContent, projectUID, theContent.getMembers(0)
 			.getStudentID());
+			db.writeInfo(theContent, projectUID, this);
 			modified = false;
 		}
 	}
@@ -124,13 +151,19 @@ public static final int categoryCreationTrain = 0;
 		return theContent.build();
 	}
 
-	public void deleteTeamMember(int[] index) {
+	public void deleteTeamMember(int index) {
 		modified = true;
 		memberModified = true;
+		String id = theContent.getMembers(index).getStudentID();
+		theContent.removeMembers(index);
+		
+			DB db = new DB();
+			db.removeMemberRelation(id,projectUID);
+	}
 
-		for (int i : index) {
-			theContent.removeMembers(i);
-		}
+	public void addMember(String id) {
+		DB db = new DB();
+		db.addNewMemberRelation(id, projectUID);
 	}
 
 	@Override
@@ -176,6 +209,104 @@ public static final int categoryCreationTrain = 0;
 			}
 		}
 
+		public void removeMemberRelation(String id, long projectUID) {
+			final String sql="delete from projectMemberRelation where project=? and member=?";
+			Connection con = null;
+			
+			try {
+				con = getPool().getConnection();
+				PreparedStatement statement = con.prepareStatement(sql);
+				statement.setLong(1, projectUID);
+				statement.setString(2, id);
+				
+				statement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally{
+				close(con);
+			}
+			
+		}
+
+		public void writeInfo(Builder theContent, long projectUID,
+		ApplicationProject project) {
+			String sql = "update projectInfo set ";
+			String sufSql = " where projectUID=?";
+
+			Connection con = null;
+			try {
+				con = getPool().getConnection();
+
+				PreparedStatement statement = con.prepareStatement(sql
+				+ "authorID=?" + sufSql);
+				statement.setString(1, theContent.getMembers(0).getStudentID());
+				statement.setLong(2, projectUID);
+				statement.execute();
+				if (project.newAccessLevel != null) {
+					statement = con.prepareStatement(sql + "projectUID=?"
+					+ sufSql);
+					statement.setString(1, project.newAccessLevel.toString());
+					statement.setLong(2, projectUID);
+					statement.execute();
+				}
+				if (project.projectClass >= 0) {
+					String classStr = null;
+					switch (project.projectClass) {
+					case ApplicationProject.projectClassInSchool:
+						classStr = "inSchool";
+						break;
+					case ApplicationProject.projectClassNational:
+						classStr = "national";
+						break;
+					case ApplicationProject.projectClassProvincial:
+						classStr = "provincial";
+						break;
+					default:
+						classStr = "";
+					}
+					statement = con.prepareStatement(sql + "projectClass=?"
+					+ sufSql);
+					statement.setString(1, classStr);
+					statement.setLong(2, projectUID);
+					statement.execute();
+				}
+				if (project.projectNum != null) {
+					statement = con.prepareStatement(sql + "projectNum=?"
+					+ sufSql);
+					statement.setString(1, project.projectNum);
+					statement.setLong(2, projectUID);
+					statement.execute();
+				}
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				if (theContent.hasStartTime()) {
+					Date date = new Date(format
+					.parse(theContent.getStartTime()).getTime());
+					statement = con.prepareStatement(sql + "startTime=?"
+					+ sufSql);
+					statement.setDate(1, date);
+					statement.setLong(2, projectUID);
+					statement.execute();
+				}
+				if (theContent.hasFinishTime()) {
+					Date date = new Date(format.parse(
+					theContent.getFinishTime()).getTime());
+					statement = con.prepareStatement(sql + "finishTime=?"
+					+ sufSql);
+					statement.setDate(1, date);
+					statement.setLong(2, projectUID);
+					statement.execute();
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} finally {
+				close(con);
+			}
+
+		}
+
 		boolean writeContent(Content.Builder content, long projectUID,
 		String userID) {
 			final String sql = "replace into projectData (authorID,projectUID,projectDatacol) value(?,?,?)";
@@ -195,7 +326,8 @@ public static final int categoryCreationTrain = 0;
 				statement.execute();
 				return true;
 			} catch (Exception e) {
-				log.warn("Exception occurred during write project content into DB:",e);
+				log.warn(
+				"Exception occurred during write project content into DB:", e);
 				return false;
 			} finally {
 				close(con);
@@ -219,7 +351,7 @@ public static final int categoryCreationTrain = 0;
 					return null;
 				}
 			} catch (SQLException e) {
-				log.warn("Exception occurred during load content from DB:",e);
+				log.warn("Exception occurred during load content from DB:", e);
 				return null;
 			} finally {
 				close(con);
@@ -243,6 +375,25 @@ public static final int categoryCreationTrain = 0;
 			} finally {
 				close(con);
 			}
+		}
+
+		public void addNewMemberRelation(String id, long projectUID) {
+			final String sql = "insert into projectMemberRelation (member,project) values(?,?)";
+			Connection con = null;
+
+			try {
+				con = getPool().getConnection();
+				PreparedStatement statement = con.prepareStatement(sql);
+				statement.setString(1, id);
+				statement.setLong(2, projectUID);
+				
+				statement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally{
+				close(con);
+			}
+
 		}
 	}
 
@@ -274,8 +425,10 @@ public static final int categoryCreationTrain = 0;
 			long uidAlloc(String userID) {
 				final String sql = "insert into projectInfo (authorID,projectCategory) values(?,?)";
 				final String sql2 = "select last_insert_id()";
+				final String sql3 = "insert into projectMemberRelation (member,project) values(?,?)";
 				ResultSet result = null;
 				Connection con = null;
+				long projectUID = -1;
 
 				try {
 					con = getPool().getConnection();
@@ -289,13 +442,21 @@ public static final int categoryCreationTrain = 0;
 					statement.execute();
 					result = statement.getResultSet();
 					if (result.first()) {
-						return result.getLong(1);
+						projectUID = result.getLong(1);
 					} else {
 						return -1;
 					}
+					statement = con.prepareStatement(sql3);
+					statement.setString(1, userID);
+					statement.setLong(2, projectUID);
+					statement.execute();
+
+					return projectUID;
 
 				} catch (SQLException e) {
-					log.error("Exception occurred during allocating a uid for project",e);
+					log
+					.error(
+					"Exception occurred during allocating a uid for project", e);
 					e.printStackTrace();
 					return -1;
 				} finally {

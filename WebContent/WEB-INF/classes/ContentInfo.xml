@@ -4,7 +4,7 @@
 		<type>AP</type>
 		<projectClass>com.RS.model.project.application.ApplicationProject</projectClass>
 		<contentClass>com.RS.model.project.application.AppProjectContent$Content</contentClass>
-		<fillerClass>wkBule.docFiller.ApplicationProjectFiller</fillerClass>
+		<fillerClass>wkBule.docFiller.application.ApplicationProjectFiller</fillerClass>
 		<template>ApplicationProjectTemplate.docx</template>
 		<editorPage>ApplicationEditor.jsp</editorPage>
 		<projectName>申请新项目</projectName>

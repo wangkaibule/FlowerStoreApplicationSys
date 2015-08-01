@@ -15,13 +15,13 @@ import com.RS.model.ProjectInfo;
  * Servlet implementation class TestInvalidUser
  */
 @WebServlet("/exit")
-public class TestInvalidUser extends HttpServlet {
+public class InvalidUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public TestInvalidUser() {
+	public InvalidUser() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

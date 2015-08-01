@@ -19,7 +19,7 @@ import com.RS.model.CurrentUserInformation;
 /**
  * Servlet Filter implementation class ValidateLoginFilter
  */
-@WebFilter(urlPatterns = { "/*" }, filterName = "isLoginFilter", initParams = { @WebInitParam(name = "patterns", value = "(.*)/Login,(.*)/Register,(.*)/js/.*,.*/css/.*") })
+@WebFilter(urlPatterns = { "/*" }, filterName = "isLoginFilter", initParams = { @WebInitParam(name = "patterns", value = "(.*)/pic/.*,(.*)/Login,(.*)/Register,(.*)/js/.*,.*/css/.*,.*/appGetContentForFill") })
 public class ValidateLoginFilter implements Filter {
 	private static String[] patterns;
 

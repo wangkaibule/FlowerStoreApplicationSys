@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
-import org.apache.tomcat.jdbc.pool.DataSource;
-
-import com.RS.model.*;
+import com.RS.model.CurrentUserInformation;
+import com.RS.model.DBConnection;
 
 /**
  * Servlet implementation class LoginManager
@@ -59,9 +59,14 @@ public class LoginManager extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		request.getRequestDispatcher("LoginPage.jsp")
-				.forward(request, response);
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			// TODO Auto-generated method stub
+			request.getRequestDispatcher("LoginPage.jsp")
+			.forward(request, response);
+		}else{
+			response.sendRedirect(response.encodeRedirectURL("DashBoard"));
+		}
 		return;
 	}
 

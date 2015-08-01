@@ -4,4 +4,9 @@ function init(){
 			return false;
 		}
 	})
+	$("#exitBut").on("click",exit);
+}
+
+function exit(){
+	window.location.replace("exit?invalidUser=true");
 }

@@ -18,6 +18,14 @@ body {
 	background-color: transparent;
 }
 
+#exitBut {
+  width: 73px;
+  float: right;
+  top: 10px;
+  position: relative;
+  color: red;
+}
+
 a{
 	text-decoration: none;
 }

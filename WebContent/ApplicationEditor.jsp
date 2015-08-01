@@ -14,7 +14,8 @@
 
 
 <jsp:setProperty property="*" name="Content" />
-<jsp:useBean id="project" class="com.RS.model.project.application.ApplicationProject"></jsp:useBean>
+<jsp:useBean id="project"
+ class="com.RS.model.project.application.ApplicationProject"></jsp:useBean>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -41,6 +42,15 @@
 </c:if>
 </head>
 <body onload="javascript:init();">
+   <div class="tips">
+    <ul>
+     使用帮助：
+     <li>鼠标点击相应的表格项以进行编辑</li>
+     <li>选择选项中的添加/删除成员操作以编辑成员</li>
+     <li>编辑完成后应点击提交以保存修改</li>
+     <li>这不是一个良好的文字编辑界面，推荐您在记事本等程序中编辑好后再粘贴进对应表项。</li>
+    </ul>
+   </div>
  <div id="ContentWrapper">
   <form action="ApplicationEditor.jsp" method="post" id="theForm">
    <table border="0" cellspacing="0" cellpadding="0" class="ta1">
@@ -60,9 +70,9 @@
      </tr>
      <tr class="ro2">
       <td colspan="1" style="width: 0.8898in;" class="ce2"><p>项目名称</p></td>
-      <td colspan="5" style="width: 1.1118in;" class="ce8"><h2>
-        <a href="javascript:;" class="clickable" id="Title" name="name"><c:out
-          value="${Content.name }" /></a>
+      <td colspan="5" style="width: 1.1118in;" class="ce8 editable twoRow" id="Title" name="name"><h2>
+        <pre><c:out
+          value="${Content.name }" /></pre>
        </h2></td>
       <td></td>
      </tr>
@@ -70,14 +80,11 @@
       <td colspan="2" style="width: 0.8898in;" class="ce2"><p>项目类别</p></td>
       <td colspan="4" style="width: 1.1118in;" class="ce8"><a
        class="choosable" name="projectCategoryForm" href="javascript:;">
-        <c:if
-         test="${project.categoryCreationTrain eq Content.category }">创新实验项目</c:if>
-        <c:if
-         test="${project.categoryBussinessTrain eq Content.category }">创业实验项目</c:if>
+        <c:if test="${project.categoryCreationTrain eq Content.category }">创新实验项目</c:if>
+        <c:if test="${project.categoryBussinessTrain eq Content.category }">创业实验项目</c:if>
         <c:if
          test="${project.categoryBussinessPractice  eq Content.category }">创业实践项目</c:if>
-        <c:if
-         test="${project.categoryUndefined eq Content.category }">未定义</c:if>
+        <c:if test="${project.categoryUndefined eq Content.category }">未定义</c:if>
       </a></td>
       <td></td>
      </tr>
@@ -95,19 +102,19 @@
        style="width: 0.8898in;" class="ce2" id="memberInfoTitle"
        data-nextIndex="2"><p>项目负责人及主要成员</p></td>
       <td style="width: 1.1118in;" class="ce8"><a data-index="0"
-       name="name" class="blurthensub" href="javascript:;"
+       name="name" class="" href="javascript:;"
        data-title="memberInfo" group="a" counter="a"><c:out
          value="${Content.membersList[0].name }" /></a></td>
       <td style="width: 1.1118in;" class="ce8"><a data-index="0"
-       name="department" class="blurthensub" href="javascript:;"
+       name="department" class="" href="javascript:;"
        data-title="memberInfo" group="a"><c:out
          value="${Content.membersList[0].department }" /></a></td>
       <td style="width: 1.1118in;" class="ce8"><a data-index="0"
-       name="profession" class="blurthensub" href="javascript:;"
+       name="profession" class="" href="javascript:;"
        data-title="memberInfo" group="a"><c:out
          value="${Content.membersList[0].profession }" /></a></td>
       <td style="width: 1.1118in;" class="ce12"><a data-index="0"
-       name="studentID" class="blurthensub" href="javascript:;"
+       name="studentID" class="" href="javascript:;"
        data-title="memberInfo" group="a"><c:out
          value="${Content.membersList[0].studentID }" /></a></td>
       <td style="width: 1.1118in;" class="ce8"><a data-index="0"
@@ -124,19 +131,19 @@
       <tr class="ro2 roMemberList">
        <td style="width: 1.1118in;" class="ce8"><a
         data-index="<c:out value="${status.index }"/>" name="name"
-        class="blurthensub" href="javascript:;" data-title="memberInfo"
+        class="" href="javascript:;" data-title="memberInfo"
         group="a" counter="a"><c:out value="${current.name }" /></a></td>
        <td style="width: 1.1118in;" class="ce8"><a
         data-index="<c:out value="${status.index }"/>" name="department"
-        class="blurthensub" href="javascript:;" data-title="memberInfo"
+        class="" href="javascript:;" data-title="memberInfo"
         group="a"><c:out value="${current.department }" /></a></td>
        <td style="width: 1.1118in;" class="ce8"><a
         data-index="<c:out value="${status.index }"/>" name="profession"
-        class="blurthensub" href="javascript:;" data-title="memberInfo"
+        class="" href="javascript:;" data-title="memberInfo"
         group="a"><c:out value="${current.profession }" /></a></td>
        <td style="width: 1.1118in;" class="ce12"><a
         data-index="<c:out value="${status.index }"/>" name="studentID"
-        class="blurthensub" href="javascript:;" data-title="memberInfo"
+        class="" href="javascript:;" data-title="memberInfo"
         group="a"><c:out value="${current.studentID }" /></a></td>
        <td style="width: 1.1118in;" class="ce8"><a
         data-index="<c:out value="${status.index }"/>"
@@ -149,8 +156,9 @@
         group="a"><c:out value="${current.tel }" /></a></td>
       </tr>
      </c:forEach>
-     <tr style="visible:none" class="addable hiddenAddable" group="a" name="memberInfo"></tr>
-     
+     <tr style="visible: none" class="addable hiddenAddable" group="a"
+      name="memberInfo"></tr>
+
      <tr class="ro2">
       <td style="width: 1.1118in;" class="ce8">&nbsp;</td>
       <td style="width: 1.1118in;" class="ce8"><p>姓名</p></td>
@@ -249,18 +257,14 @@
         选题背景和意义<span class="T1">（应着重说明学生对该项目的自主兴趣所在和原先在该项目上所积累的实践基础和知识基础）</span>
        </p></td>
       <td colspan="6" style="width: 1.1118in;" class="editable"
-       name="backgroundDescription"><pre style="text-align: left">
-        <c:out value="${Content.backgroundDescription }" />
-       </pre></td>
+       name="backgroundDescription"><pre style="text-align: left"><c:out value="${Content.backgroundDescription }" /></pre></td>
      </tr>
      <tr class="ro5">
       <td style="width: 0.8898in;" class="ce2"><p>
         项目简介<span class="T1">（包括项目内容、主要技术方案和路线、已有工作基础）</span>
        </p></td>
       <td colspan="6" style="width: 1.1118in;" name="projectDescription"
-       class="editable"><pre style="text-align: left">
-        <c:out value="${Content.projectDescription }" />
-       </pre></td>
+       class="editable"><pre style="text-align: left"><c:out value="${Content.projectDescription }" /></pre></td>
      </tr>
      <tr class="ro6">
       <td style="width: 0.8898in;" class="ce3"><p>预期成果</p>
@@ -268,16 +272,12 @@
         <span class="T1">（实验报告、论文、设计、专利、产品、服务等）</span>
        </p></td>
       <td name="goalExpectation" colspan="6" style="width: 1.1118in;"
-       class="editable"><pre style="text-align: left">
-        <c:out value="${Content.goalExpectation }" />
-       </pre></td>
+       class="editable"><pre style="text-align: left"><c:out value="${Content.goalExpectation }" /></pre></td>
      </tr>
      <tr class="ro7">
       <td style="width: 0.8898in;" class="ce2"><p id="sp1">主要创新点与特色</p></td>
       <td name="projectFeatures" colspan="6" style="width: 1.1118in;"
-       class="editable"><pre style="text-align: left">
-        <c:out value="${Content.projectFeatures }" />
-       </pre></td>
+       class="editable"><pre style="text-align: left"><c:out value="${Content.projectFeatures }" /></pre></td>
      </tr>
      <tr class="ro8">
       <td style="width: 0.8898in;" class="ce2"><p>配套条件要求</p>
@@ -285,9 +285,7 @@
         <span class="T1">（包括设备、场地、材料、实验课时及指导教师要求）</span>
        </p></td>
       <td colspan="6" name="equipmentNeeds" style="width: 1.1118in;"
-       class="editable"><pre style="text-align: left">
-        <c:out value="${Content.equipmentNeeds }" />
-       </pre></td>
+       class="editable"><pre style="text-align: left"><c:out value="${Content.equipmentNeeds }" /></pre></td>
      </tr>
      <tr class="ro9">
       <td style="width: 0.8898in;" class="ce2"><p>经费预算</p>
@@ -295,9 +293,7 @@
         <span class="T1">（包括设备、材料、制作及软件等费用）</span>
        </p></td>
       <td name="financialNeed" colspan="6" style="width: 1.1118in;"
-       class="editable"><pre style="text-align: left">
-        <c:out value="${Content.financialNeed }" />
-       </pre></td>
+       class="editable"><pre style="text-align: left"><c:out value="${Content.financialNeed }" /></pre></td>
      </tr>
      <tr class="ro10">
       <td rowspan="2" style="text-align: left; width: 0.8898in;"
@@ -359,35 +355,33 @@
     </tbody>
    </table>
    <div class="scrollingbox">
-
-    <div id="boxtitle">
-     <div>选项</div>
-     <div class="draggableTag"></div>
-    </div>
-    <div id="boxcontent">
-     <div id="contentTableWrapper">
-      <table class="noborder">
-       <tr>
-        <td><div id="back" class="toolbut">回到项目列表</div></td>
-       </tr>
-       <c:if test="${not param.isView }">
+     <div id="boxtitle">
+      <div>选项</div>
+      <div class="draggableTag"></div>
+     </div>
+     <div id="boxcontent">
+      <div id="contentTableWrapper">
+       <table class="noborder">
         <tr>
-         <td><div class="toolbut addable" id="addMember" group="a"
-           >添加</div></td>
+         <td><div id="back" class="toolbut">回到项目列表</div></td>
         </tr>
-        <tr>
-         <td><div class="toolbut" id="deleteMember" group="a"
-           name="memberInfo">删除最后一个成员</div></td>
+        <c:if test="${not param.isView }">
+         <tr>
+          <td><div class="toolbut addable" id="addMember" group="a">添加/删除成员</div></td>
         </tr>
         <tr>
          <td><div class="toolbut" id="subbut">提交</div></td>
         </tr>
-       </c:if>
+        </c:if>
+      
       </table>
+      </div>
+       <div id="memberPanelWrapper" style="display: none;" >
+    <div id="memberPanel"></div>
+<div id="closer">关闭</div>
+       </div>
      </div>
-    </div>
-   </div>
-  </form>
+    </div></form>
   <input type="text" class="wrapInput" id="protoInput"
    style="display: none">
   <textarea class="wrapText" id="protoTextarea" style="display: none"

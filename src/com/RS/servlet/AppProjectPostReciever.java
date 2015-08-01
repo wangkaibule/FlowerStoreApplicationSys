@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.RS.model.TeamMemberInfo;
 import com.RS.model.project.application.AppProjectContent;
 import com.RS.model.project.application.AppProjectContent.Content;
+import com.RS.model.project.application.AppProjectContent.Content.MemberInfo;
 import com.RS.model.project.application.ApplicationProject;
 
 /**
@@ -37,7 +38,49 @@ public class AppProjectPostReciever extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 	HttpServletResponse response) throws ServletException, IOException {
-		response.sendError(HttpServletResponse.SC_NO_CONTENT);
+		String title = request.getParameter("title");
+		if (title == null) {
+			response.sendError(HttpServletResponse.SC_NO_CONTENT);
+		} else {
+			if (title.equals("memberInfoUpdate")) {
+				String id = request.getParameter("id");
+				String index = request.getParameter("index");
+				Content.Builder content = (Content.Builder) request.getSession(
+				false).getAttribute("Content");
+				ApplicationProject project = (ApplicationProject) request
+				.getSession(false).getAttribute(
+				ProjectContentManager.pendingProject);
+
+				List<MemberInfo> list = content.getMembersList();
+				for (MemberInfo info : list) {
+					if (info.getStudentID().equals(id)) {
+						response.sendError(HttpServletResponse.SC_NO_CONTENT);
+						return;
+					}
+				}
+
+				TeamMemberInfo newInfo = new TeamMemberInfo(id);
+				Content.MemberInfo.Builder builder = newInfo.builder();
+
+				if (builder != null) {
+					content.addMembers(builder);
+					project.addMember(id);
+				} else {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+					return;
+				}
+
+				request.setAttribute("id", id);
+				request.setAttribute("profession", newInfo.profession);
+				request.setAttribute("department", newInfo.department);
+				request.setAttribute("name", newInfo.name);
+				request.setAttribute("nextIndex", index);
+
+				request.getRequestDispatcher("formPieces/memberInfoPiece.jsp")
+				.forward(request, response);
+				return;
+			}
+		}
 	}
 
 	/**
@@ -54,7 +97,7 @@ public class AppProjectPostReciever extends HttpServlet {
 		AppProjectContent.Content.Builder content = (AppProjectContent.Content.Builder) request
 		.getSession(false).getAttribute("Content");
 
-		if (title == null ) {
+		if (title == null) {
 			response.sendError(HttpServletResponse.SC_NO_CONTENT);
 			return;
 		}
@@ -69,24 +112,20 @@ public class AppProjectPostReciever extends HttpServlet {
 			int index = Integer.parseInt(request.getParameter("index"));
 			List<Content.MemberInfo> list = content.getMembersList();
 			if (list.size() - 1 < index) {
-				content.addMembers(new TeamMemberInfo().builder());
+				// replaced by get method
 			} else {
 				Content.MemberInfo.Builder builder = content
 				.getMembersBuilder(index);
 				isSuccess = invoke(field, value, builder, response);
 			}
 		} else if (title.equals("memberInfoDelete")) {
-			String[] strIndex = request.getParameterValues("index");
-			int[] index = new int[strIndex.length];
+			String strIndex = request.getParameter("index");
+			int index;
 			ApplicationProject project = (ApplicationProject) request
 			.getSession(false).getAttribute(
 			ProjectContentManager.pendingProject);
-			
-			int i =0;
-			for(String str:strIndex){
-				index[i] = Integer.parseInt(str);
-				i++;
-			}
+
+			index = Integer.parseInt(strIndex);
 			project.deleteTeamMember(index);
 		}
 
